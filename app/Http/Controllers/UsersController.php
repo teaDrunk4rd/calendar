@@ -8,19 +8,33 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
-    public function read(Request $request) {
-        return User::find($request['id']);
+    public function read($id) {
+        return response()->json(User::find($id), 200);
     }
 
     public function update(Request $request) {
-        $this->validate($request, User::$validation);
+        $this->validate($request, [
+            'full_name' => 'max:255',
+            'email' => 'required|max:255', // TODO: format
+            'password' => 'max:255',
+        ]);
 
         $user = User::find($request["id"]);
-        $user->full_name = $request['full_name'];
-        $user->email = $request['email'];
-        $user->password = Hash::make($request['password']);
-        $user->save();
+        if ($user) {
+            if ($request['full_name'] != '')
+                $user->full_name = $request['full_name'];
 
-        return response()->json($user, 200);
+            if ($user->email != $request['email'] && User::where('email', $request['email'])->first() == null) // TODO: message
+                $user->email = $request['email'];
+
+            if ($request['password'] != '')
+                $user->password = Hash::make($request['password']);
+
+            $user->save();
+
+            return response()->json($user, 200);
+        }
+
+        return response()->json($user, 404);
     }
 }

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -25,7 +24,6 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) {
-        $this->validate($request, User::$validation);
 
         $user = User::where('email', $request['email'])->first();
         if ($user != null && Hash::check($request['password'], $user->password))

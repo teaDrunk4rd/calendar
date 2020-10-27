@@ -4,9 +4,7 @@ import React, {Component} from 'react';
 export default class Calendar extends Component {
     constructor(props) {
         super(props);
-        this.state = {//.sort(function (a, b) {
-            //     return a.hour_of_day - b.hour_of_day
-            // }),
+        this.state = {
             events: [],
             eventTypes: {},
             dates: this.getDaysInMonth(10, 2020) // TODO: fix this
@@ -98,8 +96,9 @@ export default class Calendar extends Component {
                                     ).map((event, eventIndex) => {
                                         return (
                                             <div key={index + '' + eventIndex}
-                                                className={`card-text row p-0 pl-2 mb-2 ${event.creator_id === 1 ? 'own-event' : ''}`}
-                                                title={`${event.hour_of_day}:00 — ${event.name}`}>
+                                                className={`card-text row p-0 pl-2 mb-2 
+                                                ${event.creator_id === JSON.parse(localStorage["user"]).id ? 'own-event' : ''}`}
+                                                 title={`${event.hour_of_day}:00 — ${event.name}`}>
                                                 <div className="col-4 p-0">{event.hour_of_day}:00 —</div>
                                                 <div className="col-8 p-0 event-name">{event.name}</div>
                                             </div>

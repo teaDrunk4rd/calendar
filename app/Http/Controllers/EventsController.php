@@ -22,7 +22,7 @@ class EventsController extends Controller
             'type_id' => 'required',
         ]);
 
-        $event = new Event(); // Event::create($request->all());
+        $event = new Event();
         $this->editEvent($event, $request);
         $event->save();
 

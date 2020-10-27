@@ -6,5 +6,11 @@ use Illuminate\Http\Request;
 //    return $request->user();
 //});
 
+Route::post('login', 'AuthController@login');
+
+Route::get('profile/{id}', 'UsersController@read');
+Route::put('profile/update','UsersController@update');
+
 Route::get('events', 'EventsController@index');
+
 Route::get('eventTypes', 'EventTypesController@index');

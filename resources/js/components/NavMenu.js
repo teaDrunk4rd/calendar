@@ -31,7 +31,14 @@ export class NavMenu extends Component {
                                     <NavLink tag={Link} className="text-dark" to="/calendar">Календарь</NavLink>
                                 </NavItem>
                                 <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/login">Войти</NavLink>
+                                    {localStorage["user"] ? (
+                                        <NavLink tag={Link} className="text-dark" to="/profile">
+                                            {JSON.parse(localStorage["user"]).email}
+                                        </NavLink>) : (
+                                        <NavLink tag={Link} className="text-dark" to="/login">
+                                            Вход
+                                        </NavLink>)
+                                    }
                                 </NavItem>
                             </ul>
                         </Collapse>
