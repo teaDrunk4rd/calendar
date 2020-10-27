@@ -1,0 +1,36 @@
+
+.main-logo {
+    margin: 0;
+    background: url(../photo.png) no-repeat;
+    width: 100px;
+    height: 40px;
+}
+
+.calendar-item, .calendar-header th {
+    flex: 0 0 14.285714285714286%;
+    max-width: 14.285714285714286%;
+    position: relative;
+    padding: 3px;
+}
+
+.calendar-header th {
+    text-align: center;
+}
+
+.inactive-card {
+    background-color: lightgray;
+    color: gray;
+}
+
+.current-card {
+    border: 3px solid royalblue;
+}
+
+.current-card .card-title, .own-event {
+    color: royalblue;
+}
+
+.event-name {
+    font-size: 14px;
+    padding-top: 2px!important;
+}
