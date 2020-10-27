@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 //});
 
 Route::post('login', 'AuthController@login');
+Route::post('registration', 'AuthController@registration');
 
 Route::get('profile/{id}', 'UsersController@read');
 Route::put('profile/update','UsersController@update');

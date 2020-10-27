@@ -8,19 +8,26 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function signUp(Request $request)
+    public function registration(Request $request)
     {
-        $this->validate($request, User::$validation);
+        $this->validate($request, [
+            'full_name' => 'max:255',
+            'email' => 'required|unique:users|max:255', // TODO: format
+            'password' => 'required|max:255',
+        ]);
 
-        User::create([
+        $user = User::create([
             'full_name' => $request['full_name'],
-            'email' => $request['full_name'],
+            'email' => $request['email'],
             'password' => Hash::make($request['password']),
             'remember_token' => '',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
-        return response()->json(null, 201);
+        $user->full_name = $request['full_name'];
+        $user->save();
+
+        return response()->json($user, 201);
     }
 
     public function login(Request $request) {

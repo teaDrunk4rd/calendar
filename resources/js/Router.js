@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/Profile";
 import {NavMenu} from "./components/NavMenu";
+import Registration from "./components/Registration";
 
 export class Router extends Component {
     render() {
@@ -14,8 +15,9 @@ export class Router extends Component {
                 <div className='row mx-5'>
                     {this.props.children}
                     <Switch>
-                        <PrivateRoute exact path="/calendar" component={Calendar}/>
                         <Route exact path="/login" component={Login}/>
+                        <Route exact path="/registration" component={Registration}/>
+                        <PrivateRoute exact path="/calendar" component={Calendar}/>
                         <PrivateRoute exact path="/profile" component={Profile}/>
                     </Switch>
                 </div>

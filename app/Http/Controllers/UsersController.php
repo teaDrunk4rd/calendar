@@ -21,8 +21,7 @@ class UsersController extends Controller
 
         $user = User::find($request["id"]);
         if ($user) {
-            if ($request['full_name'] != '')
-                $user->full_name = $request['full_name'];
+            $user->full_name = $request['full_name'];
 
             if ($user->email != $request['email'] && User::where('email', $request['email'])->first() == null) // TODO: message
                 $user->email = $request['email'];
