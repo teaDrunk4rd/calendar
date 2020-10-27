@@ -21,4 +21,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static $validation = [
+        'full_name' => 'max:255',
+        'email' => 'required|unique:users|max:255', // TODO: format
+        'password' => 'required|max:255',
+    ];
 }
