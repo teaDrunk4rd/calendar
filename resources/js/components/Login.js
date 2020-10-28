@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
+import {NotificationManager} from "react-notifications";
 
 export default class Login extends Component {
     constructor(props) {
@@ -13,13 +14,26 @@ export default class Login extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
+
+        if (this.state.email === '') {
+            return NotificationManager.error('Заполните e-mail');
+        } else if (this.state.password === '') {
+            return NotificationManager.error('Заполните пароль');
+        } else if (this.state.email.length > 255) {
+            return NotificationManager.error('Слишком длинный email');
+        } else if (this.state.password.length > 255) {
+            return NotificationManager.error('Слишком длинный пароль');
+        }
+
         axios.post('api/login', {
             email: this.state.email,
             password: this.state.password
         }).then(response => {
-            if (response.status === 200) {
+            if (response.status === 200 && !response.data.message) {
                 localStorage['user'] = JSON.stringify(response.data);
                 this.props.history.push('/calendar');
+            } else {
+                NotificationManager.error(response.data.message);
             }
         });
     }

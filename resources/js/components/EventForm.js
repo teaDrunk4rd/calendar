@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import Select from "react-select";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ru from "date-fns/locale/ru";
+import {NotificationManager} from "react-notifications";
 registerLocale("ru", ru);
 
 export default class EventForm extends Component {
@@ -43,19 +44,33 @@ export default class EventForm extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
+
+        if (this.state.name === '') {
+            return NotificationManager.error('Заполните наименование');
+        } else if (this.state.date === '' || this.state.date === null) {
+            return NotificationManager.error('Заполните дату');
+        } else if (this.state.typeId === '') {
+            return NotificationManager.error('Заполните тип');
+        } else if (this.state.name.length > 255) {
+            return NotificationManager.error('Слишком длинное наименование');
+        }
+
         if (this.state.id !== undefined) {
             axios.put('/api/events/update', {
                 id: this.state.id,
                 name: this.state.name,
                 description: this.state.description,
                 date: (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000,
-                type_id: this.state.typeId
+                type_id: this.state.typeId,
+                creator_id: JSON.parse(localStorage["user"]).id
             }).then(response => {
-                if (response.status === 200) {
+                if (response.status === 200 && !response.data.message) {
                     this.props.history.push({
                         pathname: '/calendar',
                         date: this.state.date
                     });
+                } else {
+                    NotificationManager.error(response.data.message);
                 }
             });
         } else {
@@ -66,11 +81,13 @@ export default class EventForm extends Component {
                 type_id: this.state.typeId,
                 creator_id: JSON.parse(localStorage["user"]).id
             }).then(response => {
-                if (response.status === 201) {
+                if (response.status === 201 && !response.data.message) {
                     this.props.history.push({
                         pathname: '/calendar',
                         date: this.state.date
                     });
+                } else {
+                    NotificationManager.error(response.data.message);
                 }
             });
         }

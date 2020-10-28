@@ -12,9 +12,15 @@ class AuthController extends Controller
     {
         $this->validate($request, [
             'full_name' => 'max:255',
-            'email' => 'required|unique:users|max:255', // TODO: format
+            'email' => 'required|max:255',
             'password' => 'required|max:255',
         ]);
+
+        if (!User::where('email', $request['email'])->first() == null)
+            return response()->json(['message' => 'Пользователь с таким email уже существует']);
+
+        if (!filter_var($request['email'], FILTER_VALIDATE_EMAIL))
+            return response()->json(['message' => 'E-mail введен неверно']);
 
         $user = User::create([
             'full_name' => $request['full_name'],
@@ -31,6 +37,13 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) {
+        $this->validate($request, [
+            'email' => 'required|max:255',
+            'password' => 'required|max:255',
+        ]);
+
+        if (!filter_var($request['email'], FILTER_VALIDATE_EMAIL))
+            return response()->json(['message' => 'E-mail введен неверно']);
 
         $user = User::where('email', $request['email'])->first();
         if ($user != null && Hash::check($request['password'], $user->password))
@@ -40,6 +53,6 @@ class AuthController extends Controller
                 'email' => $user['email']
             ], 200);
 
-        return response()->json(null, 401);
+        return response()->json(['message' => 'Неверный логин или пароль']);
     }
 }

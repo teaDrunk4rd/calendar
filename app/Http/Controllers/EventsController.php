@@ -19,11 +19,7 @@ class EventsController extends Controller
     }
 
     public function create(Request $request) {
-        $this->validate($request, [
-            'name' => 'required|max:255',
-            'date' => 'required',
-            'type_id' => 'required',
-        ]);
+        $this->validate($request, Event::$validation);
 
         $event = new Event();
         $event = $this->editEvent($event, $request);
@@ -37,13 +33,13 @@ class EventsController extends Controller
     }
 
     public function update(Request $request) {
-        $this->validate($request, [
-            'name' => 'required|max:255',
-            'date' => 'required',
-            'type_id' => 'required',
-        ]);
+        $this->validate($request, Event::$validation);
 
         $event = Event::find($request['id']);
+
+        if ($request['creator_id'] != $event->creator_id)
+            return response()->json(['message' => 'Вы не можете изменять чужое событие']);
+
         $event = $this->editEvent($event, $request);
         $event->save();
 
@@ -60,11 +56,10 @@ class EventsController extends Controller
         $date = DateTime::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $request['date']));
 
         $event->name = $request['name'];
-        $event->description = $request['description'];
+        $event->description = $request['description'] != null ? $request['description'] : '';
         $event->date = $date;
         $event->type_id = $request['type_id'];
-        if ($request['creator_id'])
-            $event->creator_id = $request['creator_id'];
+        $event->creator_id = $request['creator_id'];
         $event->hour_of_day = $date->format('H');
 
         switch ($event->type_id){
