@@ -17,6 +17,7 @@ export default class EventForm extends Component {
             date: '',
             typeId: '',
             eventTypes: [],
+            closedDate: '',
             isLoaded: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -38,6 +39,7 @@ export default class EventForm extends Component {
                         description: response.data.description,
                         date: new Date(response.data.date),
                         typeId: response.data.event_type.id,
+                        closedDate: response.data.closed_at != null ? new Date(response.data.closed_at) : null,
                         isLoaded: true
                     });
                 }
@@ -69,11 +71,12 @@ export default class EventForm extends Component {
                 description: this.state.description,
                 date: (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000,
                 type_id: this.state.typeId,
+                closed_at: (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000,
                 creator_id: JSON.parse(localStorage["user"]).id
             }).then(response => {
                 if (response.status === 200 && !response.data.message) {
                     this.props.history.push({
-                        pathname: '/calendar',
+                        pathname: '/',
                         date: this.state.date
                     });
                 } else {
@@ -84,13 +87,14 @@ export default class EventForm extends Component {
             axios.post('/api/events/create', {
                 name: this.state.name,
                 description: this.state.description,
-                date: (this.state.date.getTime()-(this.state.date.getTimezoneOffset()*60000))/1000,
+                date: (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000,
                 type_id: this.state.typeId,
+                closed_at: (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000,
                 creator_id: JSON.parse(localStorage["user"]).id
             }).then(response => {
                 if (response.status === 201 && !response.data.message) {
                     this.props.history.push({
-                        pathname: '/calendar',
+                        pathname: '/',
                         date: this.state.date
                     });
                 } else {
@@ -101,7 +105,7 @@ export default class EventForm extends Component {
     }
 
     render() {
-        const {id, name, description, date, typeId} = this.state;
+        const {id, name, description, date, closedDate, typeId} = this.state;
         return (
             <div className="col-6 m-auto">
                 <div className="card">
@@ -134,7 +138,7 @@ export default class EventForm extends Component {
                             </div>
 
                             <div className="form-group row">
-                                <label className="col-md-4 col-form-label text-md-right">Дата</label>
+                                <label className="col-md-4 col-form-label text-md-right">Дата начала</label>
                                 <div className="col-md-6">
                                     <DatePicker
                                         selected={date}
@@ -145,6 +149,20 @@ export default class EventForm extends Component {
                                         timeIntervals={60}
                                         timeCaption="time"
                                         dateFormat="dd.MM.yyyy HH:00"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group row">
+                                <label className="col-md-4 col-form-label text-md-right">Дата закрытия</label>
+                                <div className="col-md-6">
+                                    <DatePicker
+                                        selected={closedDate}
+                                        onChange={date => this.setState({closedDate: date})}
+                                        timeFormat="HH"
+                                        locale="ru"
+                                        timeCaption="time"
+                                        dateFormat="dd.MM.yyyy"
                                     />
                                 </div>
                             </div>

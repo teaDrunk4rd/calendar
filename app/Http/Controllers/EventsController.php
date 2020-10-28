@@ -46,12 +46,6 @@ class EventsController extends Controller
         return response()->json($event, 200);
     }
 
-//    public function delete() {
-//
-//        $event->delete();
-//        return response()->json(null, 204);
-//    }
-
     private function editEvent(Event $event, Request $request) { // Учесть даты типа 31 для месяцев с 28-29-30 днями?
         $date = DateTime::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $request['date']));
 
@@ -60,6 +54,7 @@ class EventsController extends Controller
         $event->date = $date;
         $event->type_id = $request['type_id'];
         $event->creator_id = $request['creator_id'];
+        $event->closed_at = $request['closed_at'] != null && $request['closed_at'] != '' ? DateTime::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $request['closed_at'])) : null;
         $event->hour_of_day = $date->format('H');
 
         switch ($event->type_id){

@@ -40,6 +40,10 @@ export default class Calendar extends Component {
         axios.get(`api/events/${(date.getTime() - (date.getTimezoneOffset() * 60000)) / 1000}`)
             .then(response => {
                 if (response.status === 200) {
+                    response.data.forEach(function (event) {
+                        event.date = new Date(event.date);
+                        event.closed_at = event.closed_at != null ? new Date(event.closed_at) : null;
+                    });
                     this.setState({events: response.data, isLoaded: true});
                 }
             });
@@ -123,11 +127,13 @@ export default class Calendar extends Component {
                                 <div className='card-body'>
                                     <h5 className='card-title'>{date['date'].getDate()}</h5>
                                     {date['status'] !== 'inactive' && this.state.events && this.state.events.filter(event =>
-                                        event.type_id === this.state.eventTypes.EVERY_DAY ||
-                                        event.type_id === this.state.eventTypes.EVERY_WEEK && event.day_of_week === date['date'].getDay() ||
-                                        event.type_id === this.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() ||
-                                        event.type_id === this.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() &&
-                                            event.month_of_year - 1 === date['date'].getMonth()
+                                        (event.type_id === this.state.eventTypes.EVERY_DAY ||
+                                            event.type_id === this.state.eventTypes.EVERY_WEEK && event.day_of_week === date['date'].getDay() ||
+                                            event.type_id === this.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() ||
+                                            event.type_id === this.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() &&
+                                            event.month_of_year - 1 === date['date'].getMonth()) &&
+                                        event.date.toLocaleDateString() <= date['date'].toLocaleDateString()
+                                        && (event.closed_at === null || event.closed_at >= date['date'])
                                     ).map((event, eventIndex) => {
                                         return (
                                             <Link key={index + '' + eventIndex}

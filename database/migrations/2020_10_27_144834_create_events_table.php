@@ -30,6 +30,8 @@ class CreateEventsTable extends Migration
             $table->smallInteger('day_of_month')->nullable();
 
             $table->smallInteger('month_of_year')->nullable();
+
+            $table->timestamp('closed_at')->nullable();
         });
     }
 

@@ -23,12 +23,12 @@ export default class NavMenu extends Component {
             <header>
                 <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3 bg-white">
                     <Container>
-                        <NavbarBrand tag={Link} to="/calendar" className='main-logo' />
+                        <NavbarBrand tag={Link} to="/" className='main-logo' />
                         <NavbarToggler onClick={this.toggleNavbar} className="mr-2"/>
                         <Collapse className="d-sm-inline-flex" isOpen={!this.state.collapsed} navbar>
                             <ul className="navbar-nav flex-grow w-100 d-flex justify-content-between">
                                 <NavItem>
-                                    <NavLink tag={Link} className="text-dark" to="/calendar">Календарь</NavLink>
+                                    <NavLink tag={Link} className="text-dark" to="/">Календарь</NavLink>
                                 </NavItem>
                                 <NavItem>
                                     {localStorage["user"] ? (

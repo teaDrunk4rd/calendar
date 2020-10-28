@@ -103816,7 +103816,7 @@ var Router = /*#__PURE__*/function (_Component) {
         component: _components_Profile__WEBPACK_IMPORTED_MODULE_6__["default"]
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PrivateRoute__WEBPACK_IMPORTED_MODULE_2__["default"], {
         exact: true,
-        path: "/calendar",
+        path: "/",
         component: _components_Calendar__WEBPACK_IMPORTED_MODULE_7__["default"]
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PrivateRoute__WEBPACK_IMPORTED_MODULE_2__["default"], {
         exact: true,
@@ -103978,6 +103978,11 @@ var Calendar = /*#__PURE__*/function (_Component) {
 
       axios.get("api/events/".concat((date.getTime() - date.getTimezoneOffset() * 60000) / 1000)).then(function (response) {
         if (response.status === 200) {
+          response.data.forEach(function (event) {
+            event.date = new Date(event.date);
+            event.closed_at = event.closed_at != null ? new Date(event.closed_at) : null;
+          });
+
           _this3.setState({
             events: response.data,
             isLoaded: true
@@ -104061,7 +104066,7 @@ var Calendar = /*#__PURE__*/function (_Component) {
         }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
           className: "card-title"
         }, date['date'].getDate()), date['status'] !== 'inactive' && _this4.state.events && _this4.state.events.filter(function (event) {
-          return event.type_id === _this4.state.eventTypes.EVERY_DAY || event.type_id === _this4.state.eventTypes.EVERY_WEEK && event.day_of_week === date['date'].getDay() || event.type_id === _this4.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() || event.type_id === _this4.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() && event.month_of_year - 1 === date['date'].getMonth();
+          return (event.type_id === _this4.state.eventTypes.EVERY_DAY || event.type_id === _this4.state.eventTypes.EVERY_WEEK && event.day_of_week === date['date'].getDay() || event.type_id === _this4.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() || event.type_id === _this4.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() && event.month_of_year - 1 === date['date'].getMonth()) && event.date.toLocaleDateString() <= date['date'].toLocaleDateString() && (event.closed_at === null || event.closed_at >= date['date']);
         }).map(function (event, eventIndex) {
           return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
             key: index + '' + eventIndex,
@@ -104274,6 +104279,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
       date: '',
       typeId: '',
       eventTypes: [],
+      closedDate: '',
       isLoaded: false
     };
     _this.handleSubmit = _this.handleSubmit.bind(_assertThisInitialized(_this));
@@ -104301,6 +104307,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
               description: response.data.description,
               date: new Date(response.data.date),
               typeId: response.data.event_type.id,
+              closedDate: response.data.closed_at != null ? new Date(response.data.closed_at) : null,
               isLoaded: true
             });
           }
@@ -104335,11 +104342,12 @@ var EventForm = /*#__PURE__*/function (_Component) {
           description: this.state.description,
           date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
           type_id: this.state.typeId,
+          closed_at: (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000,
           creator_id: JSON.parse(localStorage["user"]).id
         }).then(function (response) {
           if (response.status === 200 && !response.data.message) {
             _this3.props.history.push({
-              pathname: '/calendar',
+              pathname: '/',
               date: _this3.state.date
             });
           } else {
@@ -104352,11 +104360,12 @@ var EventForm = /*#__PURE__*/function (_Component) {
           description: this.state.description,
           date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
           type_id: this.state.typeId,
+          closed_at: (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000,
           creator_id: JSON.parse(localStorage["user"]).id
         }).then(function (response) {
           if (response.status === 201 && !response.data.message) {
             _this3.props.history.push({
-              pathname: '/calendar',
+              pathname: '/',
               date: _this3.state.date
             });
           } else {
@@ -104375,6 +104384,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
           name = _this$state.name,
           description = _this$state.description,
           date = _this$state.date,
+          closedDate = _this$state.closedDate,
           typeId = _this$state.typeId;
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-6 m-auto"
@@ -104423,7 +104433,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
         className: "form-group row"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
         className: "col-md-4 col-form-label text-md-right"
-      }, "\u0414\u0430\u0442\u0430"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, "\u0414\u0430\u0442\u0430 \u043D\u0430\u0447\u0430\u043B\u0430"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_2___default.a, {
         selected: date,
@@ -104438,6 +104448,23 @@ var EventForm = /*#__PURE__*/function (_Component) {
         timeIntervals: 60,
         timeCaption: "time",
         dateFormat: "dd.MM.yyyy HH:00"
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "col-md-4 col-form-label text-md-right"
+      }, "\u0414\u0430\u0442\u0430 \u0437\u0430\u043A\u0440\u044B\u0442\u0438\u044F"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_2___default.a, {
+        selected: closedDate,
+        onChange: function onChange(date) {
+          return _this4.setState({
+            closedDate: date
+          });
+        },
+        timeFormat: "HH",
+        locale: "ru",
+        timeCaption: "time",
+        dateFormat: "dd.MM.yyyy"
       }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "form-group row"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
@@ -104564,7 +104591,7 @@ var Login = /*#__PURE__*/function (_Component) {
         if (response.status === 200 && !response.data.message) {
           localStorage['user'] = JSON.stringify(response.data);
 
-          _this2.props.history.push('/calendar');
+          _this2.props.history.push('/');
         } else {
           react_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationManager"].error(response.data.message);
         }
@@ -104721,7 +104748,7 @@ var NavMenu = /*#__PURE__*/function (_Component) {
         className: "navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3 bg-white"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["Container"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["NavbarBrand"], {
         tag: react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"],
-        to: "/calendar",
+        to: "/",
         className: "main-logo"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["NavbarToggler"], {
         onClick: this.toggleNavbar,
@@ -104735,7 +104762,7 @@ var NavMenu = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["NavItem"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["NavLink"], {
         tag: react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"],
         className: "text-dark",
-        to: "/calendar"
+        to: "/"
       }, "\u041A\u0430\u043B\u0435\u043D\u0434\u0430\u0440\u044C")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["NavItem"], null, localStorage["user"] ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(reactstrap__WEBPACK_IMPORTED_MODULE_1__["NavLink"], {
         tag: react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"],
         className: "text-dark",
@@ -104986,7 +105013,7 @@ var Profile = /*#__PURE__*/function (_Component) {
         if (response.status === 200 && !response.data.message) {
           localStorage['user'] = JSON.stringify(response.data);
 
-          _this3.props.history.push('/calendar');
+          _this3.props.history.push('/');
         } else {
           react_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationManager"].error(response.data.message);
         }
@@ -105225,7 +105252,7 @@ var Registration = /*#__PURE__*/function (_Component) {
         if (response.status === 201 && !response.data.message) {
           localStorage['user'] = JSON.stringify(response.data);
 
-          _this2.props.history.push('/calendar');
+          _this2.props.history.push('/');
         } else {
           react_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationManager"].error(response.data.message);
         }

@@ -11,18 +11,19 @@ class EventsSeeder extends Seeder
         Event::create([
             'name'=> '123',
             'description' => '123123123123',
-            'date' => date('Y-m-d H:i:s'),
+            'date' => DateTime::createFromFormat('Y-m-d H:i:s', '2020-10-4 16:00:00'),
             'creator_id'=> 1,
             'type_id'=> EventType::where('key', 'every_day')->first()->id,
             'hour_of_day'=> 16,
             'day_of_week'=> null,
             'day_of_month'=> null,
-            'month_of_year'=> null
+            'month_of_year'=> null,
+            'closed_at' => DateTime::createFromFormat('Y-m-d H:i:s', '2020-10-10 17:00:00')
         ]);
         Event::create([
             'name'=> 'Вебинар по саморазвитию',
             'description' => 'Вебинары по саморазвитию и личностному росту. Участие в онлайн-семинарах по саморазвитию поможет вывести жизнь на совершенно новый ...',
-            'date' => date('Y-m-d H:i:s'),
+            'date' => DateTime::createFromFormat('Y-m-d H:i:s', '2020-10-5 12:00:00'),
             'creator_id'=> 1,
             'type_id'=> EventType::where('key', 'every_week')->first()->id,
             'hour_of_day'=> 12,
@@ -66,7 +67,7 @@ class EventsSeeder extends Seeder
         Event::create([
             'name'=> 'Эфир Владимира Соловьева',
             'description' => 'Как любить родину',
-            'date' => date('Y-m-d H:i:s'),
+            'date' => DateTime::createFromFormat('Y-m-d H:i:s', '2020-10-20 16:00:00'),
             'creator_id'=> 3,
             'type_id'=> EventType::where('key', 'every_week')->first()->id,
             'hour_of_day'=> 16,
