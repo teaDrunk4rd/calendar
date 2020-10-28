@@ -132,7 +132,7 @@ export default class Calendar extends Component {
                                             event.type_id === this.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() ||
                                             event.type_id === this.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() &&
                                             event.month_of_year - 1 === date['date'].getMonth()) &&
-                                        event.date.toLocaleDateString() <= date['date'].toLocaleDateString()
+                                        (new Date(event.date.getFullYear(), event.date.getMonth(), event.date.getDate()) <= date['date'])
                                         && (event.closed_at === null || event.closed_at >= date['date'])
                                     ).map((event, eventIndex) => {
                                         return (

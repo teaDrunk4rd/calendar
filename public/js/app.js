@@ -104066,7 +104066,7 @@ var Calendar = /*#__PURE__*/function (_Component) {
         }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
           className: "card-title"
         }, date['date'].getDate()), date['status'] !== 'inactive' && _this4.state.events && _this4.state.events.filter(function (event) {
-          return (event.type_id === _this4.state.eventTypes.EVERY_DAY || event.type_id === _this4.state.eventTypes.EVERY_WEEK && event.day_of_week === date['date'].getDay() || event.type_id === _this4.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() || event.type_id === _this4.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() && event.month_of_year - 1 === date['date'].getMonth()) && event.date.toLocaleDateString() <= date['date'].toLocaleDateString() && (event.closed_at === null || event.closed_at >= date['date']);
+          return (event.type_id === _this4.state.eventTypes.EVERY_DAY || event.type_id === _this4.state.eventTypes.EVERY_WEEK && event.day_of_week === date['date'].getDay() || event.type_id === _this4.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() || event.type_id === _this4.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() && event.month_of_year - 1 === date['date'].getMonth()) && new Date(event.date.getFullYear(), event.date.getMonth(), event.date.getDate()) <= date['date'] && (event.closed_at === null || event.closed_at >= date['date']);
         }).map(function (event, eventIndex) {
           return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
             key: index + '' + eventIndex,
@@ -104342,7 +104342,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
           description: this.state.description,
           date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
           type_id: this.state.typeId,
-          closed_at: (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000,
+          closed_at: this.state.closedDate != null ? (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000 : null,
           creator_id: JSON.parse(localStorage["user"]).id
         }).then(function (response) {
           if (response.status === 200 && !response.data.message) {
@@ -104360,7 +104360,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
           description: this.state.description,
           date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
           type_id: this.state.typeId,
-          closed_at: (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000,
+          closed_at: this.state.closedDate != null ? (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000 : null,
           creator_id: JSON.parse(localStorage["user"]).id
         }).then(function (response) {
           if (response.status === 201 && !response.data.message) {
