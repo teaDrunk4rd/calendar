@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ru from "date-fns/locale/ru";
+import Preloader from "./Preloader";
 registerLocale("ru", ru);
 
 
@@ -14,7 +15,8 @@ export default class Calendar extends Component {
             events: [],
             eventTypes: {},
             date: currentDate,
-            dates: this.getDaysInMonth(currentDate.getMonth(), currentDate.getFullYear())
+            dates: this.getDaysInMonth(currentDate.getMonth(), currentDate.getFullYear()),
+            isLoaded: false
         };
     }
 
@@ -38,7 +40,7 @@ export default class Calendar extends Component {
         axios.get(`api/events/${(date.getTime() - (date.getTimezoneOffset() * 60000)) / 1000}`)
             .then(response => {
                 if (response.status === 200) {
-                    this.setState({events: response.data});
+                    this.setState({events: response.data, isLoaded: true});
                 }
             });
     }
@@ -146,6 +148,7 @@ export default class Calendar extends Component {
                         </div>
                     )
                 })}
+                {!this.state.isLoaded ? <Preloader /> : <div/>}
             </div>
         );
     }

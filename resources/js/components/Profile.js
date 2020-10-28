@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {NotificationManager} from 'react-notifications';
+import Preloader from "./Preloader";
 
 
 export default class Profile extends Component {
@@ -12,7 +13,8 @@ export default class Profile extends Component {
             changePassword: false,
             oldPassword: '',
             newPassword: '',
-            passwordConfirmation: ''
+            passwordConfirmation: '',
+            isLoaded: false
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -24,7 +26,8 @@ export default class Profile extends Component {
             if (response.status === 200) {
                 this.setState({
                     email: response.data.email,
-                    fullName: response.data.full_name
+                    fullName: response.data.full_name,
+                    isLoaded: true
                 })
             }
         });
@@ -79,6 +82,7 @@ export default class Profile extends Component {
         return (
             <div className="col-6 m-auto">
                 <div className="card">
+                    {!this.state.isLoaded ? <Preloader /> : <div/>}
                     <div className="card-header">Профиль</div>
                     <div className="card-body">
                         <form onSubmit={this.handleSubmit} autoComplete='false'>

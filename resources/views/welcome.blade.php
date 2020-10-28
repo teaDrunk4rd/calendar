@@ -7,6 +7,7 @@
     <title>Календарь</title>
     <link href="{{mix('css/app.css')}}" rel="stylesheet" type="text/css">
     <link href="{{asset('css/index.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{asset('css/preloader.css')}}" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div id="root"></div>

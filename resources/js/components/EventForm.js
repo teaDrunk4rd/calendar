@@ -3,6 +3,7 @@ import Select from "react-select";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ru from "date-fns/locale/ru";
 import {NotificationManager} from "react-notifications";
+import Preloader from "./Preloader";
 registerLocale("ru", ru);
 
 export default class EventForm extends Component {
@@ -15,7 +16,8 @@ export default class EventForm extends Component {
             description: '',
             date: '',
             typeId: '',
-            eventTypes: []
+            eventTypes: [],
+            isLoaded: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -35,9 +37,14 @@ export default class EventForm extends Component {
                         name: response.data.name,
                         description: response.data.description,
                         date: new Date(response.data.date),
-                        typeId: response.data.event_type.id
+                        typeId: response.data.event_type.id,
+                        isLoaded: true
                     });
                 }
+            });
+        } else {
+            this.setState({
+                isLoaded: true
             });
         }
     }
@@ -98,6 +105,7 @@ export default class EventForm extends Component {
         return (
             <div className="col-6 m-auto">
                 <div className="card">
+                    {!this.state.isLoaded ? <Preloader /> : <div/>}
                     <div className="card-header">Событие</div>
                     <div className="card-body">
                         <form onSubmit={this.handleSubmit} autoComplete='false'>

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Preloader from "./Preloader";
 
 export default class Event extends Component {
     constructor(props) {
@@ -10,6 +11,7 @@ export default class Event extends Component {
             description: '',
             date: '',
             type: '',
+            isLoaded: false
         };
     }
 
@@ -21,7 +23,8 @@ export default class Event extends Component {
                         name: response.data.name,
                         description: response.data.description,
                         date: new Date(response.data.date),
-                        type: response.data.event_type.name
+                        type: response.data.event_type.name,
+                        isLoaded: true
                     });
                 }
             });
@@ -33,6 +36,7 @@ export default class Event extends Component {
         return (
             <div className="col-6 m-auto">
                 <div className="card text-center">
+                    {!this.state.isLoaded ? <Preloader className='event-loader' /> : <div/>}
                     <div className="card-header">Событие</div>
                     <div className="card-body">
                         <h5 className="card-title">{name}</h5>
