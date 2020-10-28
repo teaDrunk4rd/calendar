@@ -9,8 +9,6 @@ import Calendar from "./components/Calendar";
 import Event from "./components/Event";
 import EventForm from "./components/EventForm";
 
-export const absoluteUrl = 'http://127.0.0.1:8000';
-
 export class Router extends Component {
     render() {
         return (
@@ -23,8 +21,8 @@ export class Router extends Component {
                         <Route exact path="/registration" component={Registration}/>
                         <PrivateRoute exact path="/profile" component={Profile}/>
                         <PrivateRoute exact path="/calendar" component={Calendar}/>
-                        <PrivateRoute exact path="/calendar/event" component={Event}/>
-                        <PrivateRoute exact path="/addEvent" component={EventForm}/>
+                        <PrivateRoute exact path="/event" component={Event}/>
+                        <PrivateRoute exact path="/eventForm" component={EventForm}/>
                     </Switch>
                 </div>
             </div>

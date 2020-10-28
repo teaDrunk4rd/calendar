@@ -100441,12 +100441,11 @@ react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEB
 /*!********************************!*\
   !*** ./resources/js/Router.js ***!
   \********************************/
-/*! exports provided: absoluteUrl, Router */
+/*! exports provided: Router */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "absoluteUrl", function() { return absoluteUrl; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Router", function() { return Router; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
@@ -100491,7 +100490,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
-var absoluteUrl = 'http://127.0.0.1:8000';
 var Router = /*#__PURE__*/function (_Component) {
   _inherits(Router, _Component);
 
@@ -100526,11 +100524,11 @@ var Router = /*#__PURE__*/function (_Component) {
         component: _components_Calendar__WEBPACK_IMPORTED_MODULE_7__["default"]
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PrivateRoute__WEBPACK_IMPORTED_MODULE_2__["default"], {
         exact: true,
-        path: "/calendar/event",
+        path: "/event",
         component: _components_Event__WEBPACK_IMPORTED_MODULE_8__["default"]
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_PrivateRoute__WEBPACK_IMPORTED_MODULE_2__["default"], {
         exact: true,
-        path: "/addEvent",
+        path: "/eventForm",
         component: _components_EventForm__WEBPACK_IMPORTED_MODULE_9__["default"]
       }))));
     }
@@ -100746,7 +100744,7 @@ var Calendar = /*#__PURE__*/function (_Component) {
         showMonthYearPicker: true,
         showFullMonthYearPicker: true
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
-        to: "/addEvent",
+        to: "/eventForm",
         className: "btn btn-success"
       }, "\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C \u0441\u043E\u0431\u044B\u0442\u0438\u0435")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", {
         className: "table"
@@ -100765,9 +100763,16 @@ var Calendar = /*#__PURE__*/function (_Component) {
         }, date['date'].getDate()), date['status'] !== 'inactive' && _this4.state.events && _this4.state.events.filter(function (event) {
           return event.type_id === _this4.state.eventTypes.EVERY_DAY || event.type_id === _this4.state.eventTypes.EVERY_WEEK && event.day_of_week === date['date'].getDay() || event.type_id === _this4.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() || event.type_id === _this4.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() && event.month_of_year - 1 === date['date'].getMonth();
         }).map(function (event, eventIndex) {
-          return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
             key: index + '' + eventIndex,
-            className: "card-text row p-0 pl-2 mb-2 \n                                                ".concat(event.creator_id === JSON.parse(localStorage["user"]).id ? 'own-event' : ''),
+            to: event.creator_id === JSON.parse(localStorage["user"]).id ? {
+              pathname: '/eventForm',
+              id: event.id
+            } : {
+              pathname: '/event',
+              id: event.id
+            },
+            className: "card-text row p-0 pl-2 mb-2\n                                                ".concat(event.creator_id === JSON.parse(localStorage["user"]).id ? 'own-event' : date['status'] !== 'current' ? 'text-dark' : 'text-white'),
             title: "".concat(event.hour_of_day, ":00 \u2014 ").concat(event.name)
           }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
             className: "col-4 p-0"
@@ -100828,15 +100833,64 @@ var Event = /*#__PURE__*/function (_Component) {
   var _super = _createSuper(Event);
 
   function Event(props) {
+    var _this;
+
     _classCallCheck(this, Event);
 
-    return _super.call(this, props);
+    _this = _super.call(this, props);
+    _this.state = {
+      id: props.location.id,
+      name: '',
+      description: '',
+      date: '',
+      type: ''
+    };
+    return _this;
   }
 
   _createClass(Event, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      if (this.state.id !== undefined) {
+        axios.get("/api/events/read/".concat(this.state.id)).then(function (response) {
+          if (response.status === 200) {
+            _this2.setState({
+              name: response.data.name,
+              description: response.data.description,
+              date: new Date(response.data.date),
+              type: response.data.event_type.name
+            });
+          }
+        });
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, "sda");
+      var _this$state = this.state,
+          name = _this$state.name,
+          description = _this$state.description,
+          date = _this$state.date,
+          type = _this$state.type;
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-6 m-auto"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card text-center"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-header"
+      }, "\u0421\u043E\u0431\u044B\u0442\u0438\u0435"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-body"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+        className: "card-title"
+      }, name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", {
+        className: "card-subtitle mb-2 text-muted"
+      }, date.toLocaleString('ru')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+        className: "card-text"
+      }, description)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-footer text-muted"
+      }, type)));
     }
   }]);
 
@@ -100863,7 +100917,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_datepicker__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-datepicker */ "./node_modules/react-datepicker/dist/react-datepicker.min.js");
 /* harmony import */ var react_datepicker__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_datepicker__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var date_fns_locale_ru__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! date-fns/locale/ru */ "./node_modules/date-fns/esm/locale/ru/index.js");
-/* harmony import */ var _Router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Router */ "./resources/js/Router.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -100892,7 +100945,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 Object(react_datepicker__WEBPACK_IMPORTED_MODULE_2__["registerLocale"])("ru", date_fns_locale_ru__WEBPACK_IMPORTED_MODULE_3__["default"]);
 
-
 var EventForm = /*#__PURE__*/function (_Component) {
   _inherits(EventForm, _Component);
 
@@ -100905,12 +100957,12 @@ var EventForm = /*#__PURE__*/function (_Component) {
 
     _this = _super.call(this, props);
     _this.state = {
+      id: props.location.id,
       name: '',
       description: '',
       date: '',
       typeId: '',
-      eventTypes: [] //props.location.eventTypes
-
+      eventTypes: []
     };
     _this.handleSubmit = _this.handleSubmit.bind(_assertThisInitialized(_this));
     return _this;
@@ -100921,13 +100973,26 @@ var EventForm = /*#__PURE__*/function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      axios.get("".concat(_Router__WEBPACK_IMPORTED_MODULE_4__["absoluteUrl"], "/api/eventTypes")).then(function (response) {
+      axios.get('/api/eventTypes').then(function (response) {
         if (response.status === 200) {
           _this2.setState({
             eventTypes: response.data
           });
         }
       });
+
+      if (this.state.id !== undefined) {
+        axios.get("/api/events/read/".concat(this.state.id)).then(function (response) {
+          if (response.status === 200) {
+            _this2.setState({
+              name: response.data.name,
+              description: response.data.description,
+              date: new Date(response.data.date),
+              typeId: response.data.event_type.id
+            });
+          }
+        });
+      }
     }
   }, {
     key: "handleSubmit",
@@ -100935,20 +101000,38 @@ var EventForm = /*#__PURE__*/function (_Component) {
       var _this3 = this;
 
       event.preventDefault();
-      axios.post("".concat(_Router__WEBPACK_IMPORTED_MODULE_4__["absoluteUrl"], "/api/events/create"), {
-        name: this.state.name,
-        description: this.state.description,
-        date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
-        type_id: this.state.typeId,
-        creator_id: JSON.parse(localStorage["user"]).id
-      }).then(function (response) {
-        if (response.status === 201) {
-          _this3.props.history.push({
-            pathname: '/calendar',
-            date: _this3.state.date
-          });
-        }
-      });
+
+      if (this.state.id !== undefined) {
+        axios.put('/api/events/update', {
+          id: this.state.id,
+          name: this.state.name,
+          description: this.state.description,
+          date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
+          type_id: this.state.typeId
+        }).then(function (response) {
+          if (response.status === 200) {
+            _this3.props.history.push({
+              pathname: '/calendar',
+              date: _this3.state.date
+            });
+          }
+        });
+      } else {
+        axios.post('/api/events/create', {
+          name: this.state.name,
+          description: this.state.description,
+          date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
+          type_id: this.state.typeId,
+          creator_id: JSON.parse(localStorage["user"]).id
+        }).then(function (response) {
+          if (response.status === 201) {
+            _this3.props.history.push({
+              pathname: '/calendar',
+              date: _this3.state.date
+            });
+          }
+        });
+      }
     }
   }, {
     key: "render",
@@ -100956,6 +101039,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
       var _this4 = this;
 
       var _this$state = this.state,
+          id = _this$state.id,
           name = _this$state.name,
           description = _this$state.description,
           date = _this$state.date,
@@ -101053,7 +101137,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "submit",
         className: "btn btn-primary"
-      }, "\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C")))))));
+      }, id === undefined ? 'Добавить' : 'Изменить')))))));
     }
   }]);
 

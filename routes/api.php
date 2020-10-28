@@ -14,6 +14,7 @@ Route::put('profile/update','UsersController@update');
 
 Route::get('events/{date}', 'EventsController@index');
 Route::post('events/create', 'EventsController@create');
+Route::get('events/read/{id}', 'EventsController@read');
 Route::put('events/update', 'EventsController@update');
 
 Route::get('eventTypes', 'EventTypesController@index');

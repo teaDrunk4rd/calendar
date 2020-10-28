@@ -32,8 +32,8 @@ class EventsController extends Controller
         return response()->json($event, 201);
     }
 
-    public function read(Request $request) {
-        return Event::find($request['id']);
+    public function read($id) {
+        return Event::with('eventType')->find($id);
     }
 
     public function update(Request $request) {
@@ -63,7 +63,8 @@ class EventsController extends Controller
         $event->description = $request['description'];
         $event->date = $date;
         $event->type_id = $request['type_id'];
-        $event->creator_id = $request['creator_id'];
+        if ($request['creator_id'])
+            $event->creator_id = $request['creator_id'];
         $event->hour_of_day = $date->format('H');
 
         switch ($event->type_id){

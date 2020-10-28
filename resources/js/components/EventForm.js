@@ -3,42 +3,69 @@ import Select from "react-select";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ru from "date-fns/locale/ru";
 registerLocale("ru", ru);
-import {absoluteUrl} from '../Router'
 
 export default class EventForm extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            id : props.location.id,
             name: '',
             description: '',
             date: '',
             typeId: '',
-            eventTypes: [] //props.location.eventTypes
+            eventTypes: []
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
-        axios.get(`${absoluteUrl}/api/eventTypes`).then(response => {
+        axios.get('/api/eventTypes').then(response => {
             if (response.status === 200) {
                 this.setState({
                     eventTypes: response.data
                 });
             }
         });
+        if (this.state.id !== undefined) {
+            axios.get(`/api/events/read/${this.state.id}`).then(response => {
+                if (response.status === 200) {
+                    this.setState({
+                        name: response.data.name,
+                        description: response.data.description,
+                        date: new Date(response.data.date),
+                        typeId: response.data.event_type.id
+                    });
+                }
+            });
+        }
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        axios.post(`${absoluteUrl}/api/events/create`, {
-            name: this.state.name,
-            description: this.state.description,
-            date: (this.state.date.getTime()-(this.state.date.getTimezoneOffset()*60000))/1000,
-            type_id: this.state.typeId,
-            creator_id: JSON.parse(localStorage["user"]).id
-        })
-            .then(response => {
+        if (this.state.id !== undefined) {
+            axios.put('/api/events/update', {
+                id: this.state.id,
+                name: this.state.name,
+                description: this.state.description,
+                date: (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000,
+                type_id: this.state.typeId
+            }).then(response => {
+                if (response.status === 200) {
+                    this.props.history.push({
+                        pathname: '/calendar',
+                        date: this.state.date
+                    });
+                }
+            });
+        } else {
+            axios.post('/api/events/create', {
+                name: this.state.name,
+                description: this.state.description,
+                date: (this.state.date.getTime()-(this.state.date.getTimezoneOffset()*60000))/1000,
+                type_id: this.state.typeId,
+                creator_id: JSON.parse(localStorage["user"]).id
+            }).then(response => {
                 if (response.status === 201) {
                     this.props.history.push({
                         pathname: '/calendar',
@@ -46,10 +73,11 @@ export default class EventForm extends Component {
                     });
                 }
             });
+        }
     }
 
     render() {
-        const {name, description, date, typeId} = this.state;
+        const {id, name, description, date, typeId} = this.state;
         return (
             <div className="col-6 m-auto">
                 <div className="card">
@@ -112,7 +140,7 @@ export default class EventForm extends Component {
                             <div className="form-group row mb-0">
                                 <div className="col-md-8 offset-md-4">
                                     <button type="submit" className="btn btn-primary">
-                                        Добавить
+                                        {id === undefined ? 'Добавить' : 'Изменить'}
                                     </button>
                                 </div>
                             </div>

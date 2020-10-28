@@ -43,7 +43,7 @@ class EventsSeeder extends Seeder
         ]);
         Event::create([
             'name'=> 'Пятничный кутёж',
-            'description' => null,
+            'description' => '',
             'date' => date('Y-m-d H:i:s'),
             'creator_id'=> 1,
             'type_id'=> EventType::where('key', 'every_week')->first()->id,
@@ -87,7 +87,7 @@ class EventsSeeder extends Seeder
         ]);
         Event::create([
             'name'=> 'Пришествие Макаронного Монстра',
-            'description' => null,
+            'description' => 'Надевайте дуршлаги',
             'date' => date('Y-m-d H:i:s'),
             'creator_id'=> 4,
             'type_id'=> EventType::where('key', 'every_year')->first()->id,

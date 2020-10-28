@@ -94,9 +94,7 @@ export default class Calendar extends Component {
                         showMonthYearPicker
                         showFullMonthYearPicker
                     />
-                    {/*<Link to={{pathname: "/calendar/addEvent", eventTypes: this.state.eventTypes}}*/}
-                    <Link to="/addEvent"
-                          className='btn btn-success'>
+                    <Link to="/eventForm" className='btn btn-success'>
                         Добавить событие
                     </Link>
                 </div>
@@ -130,13 +128,17 @@ export default class Calendar extends Component {
                                             event.month_of_year - 1 === date['date'].getMonth()
                                     ).map((event, eventIndex) => {
                                         return (
-                                            <div key={index + '' + eventIndex}
-                                                className={`card-text row p-0 pl-2 mb-2 
-                                                ${event.creator_id === JSON.parse(localStorage["user"]).id ? 'own-event' : ''}`}
-                                                 title={`${event.hour_of_day}:00 — ${event.name}`}>
+                                            <Link key={index + '' + eventIndex}
+                                                  to={event.creator_id === JSON.parse(localStorage["user"]).id
+                                                      ? {pathname: '/eventForm', id: event.id}
+                                                      : {pathname: '/event', id: event.id}}
+                                                  className={`card-text row p-0 pl-2 mb-2
+                                                ${event.creator_id === JSON.parse(localStorage["user"]).id ? 'own-event' :
+                                                      date['status'] !== 'current' ? 'text-dark' : 'text-white'}`}
+                                                  title={`${event.hour_of_day}:00 — ${event.name}`}>
                                                 <div className="col-4 p-0">{event.hour_of_day}:00 —</div>
                                                 <div className="col-8 p-0 event-name">{event.name}</div>
-                                            </div>
+                                            </Link>
                                         )
                                     })}
                                 </div>

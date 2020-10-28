@@ -13,7 +13,7 @@ class CreateEventsTable extends Migration
 
             $table->string('name', 100);
 
-            $table->text('description')->nullable();
+            $table->text('description')->default('');
 
             $table->timestamp('date');
 
