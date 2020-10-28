@@ -1,14 +1,46 @@
 import React, {Component} from 'react';
+import {Link} from "react-router-dom";
+import DatePicker, { registerLocale } from "react-datepicker";
+import ru from "date-fns/locale/ru";
+registerLocale("ru", ru);
 
 
 export default class Calendar extends Component {
     constructor(props) {
         super(props);
+
+        let currentDate = props.location.date === undefined ? new Date() : props.location.date;
         this.state = {
             events: [],
             eventTypes: {},
-            dates: this.getDaysInMonth(10, 2020) // TODO: fix this
+            date: currentDate,
+            dates: this.getDaysInMonth(currentDate.getMonth(), currentDate.getFullYear())
         };
+    }
+
+    componentDidMount() {
+        axios.get('api/eventTypes').then(response => {
+            if (response.status === 200) {
+                this.setState({
+                    eventTypes: {
+                        EVERY_DAY: response.data.filter(t => t['key'] === 'every_day')[0].id,
+                        EVERY_WEEK: response.data.filter(t => t['key'] === 'every_week')[0].id,
+                        EVERY_MONTH: response.data.filter(t => t['key'] === 'every_month')[0].id,
+                        EVERY_YEAR: response.data.filter(t => t['key'] === 'every_year')[0].id,
+                    }
+                });
+            }
+        });
+        this.updateEvents(this.state.date);
+    }
+
+    updateEvents(date) {
+        axios.get(`api/events/${(date.getTime() - (date.getTimezoneOffset() * 60000)) / 1000}`)
+            .then(response => {
+                if (response.status === 200) {
+                    this.setState({events: response.data});
+                }
+            });
     }
 
     getDaysInMonth(month, year) {
@@ -18,10 +50,10 @@ export default class Calendar extends Component {
             .fill('')
             .map(function (v, i) {
                 return {
-                    'date': new Date(year, month - 1, i + 1),
-                    'status': year === today.getFullYear() && month - 1 === today.getMonth() && i + 1 === today.getDate() ? 'current' : 'active'
+                    'date': new Date(year, month, i + 1),
+                    'status': year === today.getFullYear() && month === today.getMonth() && i + 1 === today.getDate() ? 'current' : 'active'
                 }
-            }).filter(v => v['date'].getMonth() === month - 1);
+            }).filter(v => v['date'].getMonth() === month);
 
         while (dates[0]['date'].getDay() !== 1) {
             let date = dates[0]['date'];
@@ -42,29 +74,32 @@ export default class Calendar extends Component {
         return dates;
     }
 
-    componentDidMount() {
-        axios.get('api/eventTypes').then(response => {
-            if (response.status === 200) {
-                this.setState({
-                    eventTypes: {
-                        EVERY_DAY: response.data.filter(t => t['key'] === 'every_day')[0].id,
-                        EVERY_WEEK: response.data.filter(t => t['key'] === 'every_week')[0].id,
-                        EVERY_MONTH: response.data.filter(t => t['key'] === 'every_month')[0].id,
-                        EVERY_YEAR: response.data.filter(t => t['key'] === 'every_year')[0].id,
-                    }
-                });
-            }
-        });
-        axios.get('api/events').then(response => {
-            if (response.status === 200) {
-                this.setState({events: response.data});
-            }
+    setDate(date) {
+        this.updateEvents(date);
+        this.setState({
+            date: date,
+            dates: this.getDaysInMonth(date.getMonth(), date.getFullYear())
         });
     }
 
     render() {
         return (
             <div className='row mb-3'>
+                <div className="col-12 p-0 my-2 d-flex justify-content-between">
+                    <DatePicker
+                        selected={this.state.date}
+                        onChange={date => this.setDate(date)}
+                        dateFormat="MM.yyyy"
+                        locale="ru"
+                        showMonthYearPicker
+                        showFullMonthYearPicker
+                    />
+                    {/*<Link to={{pathname: "/calendar/addEvent", eventTypes: this.state.eventTypes}}*/}
+                    <Link to="/addEvent"
+                          className='btn btn-success'>
+                        Добавить событие
+                    </Link>
+                </div>
                 <table className='table'>
                     <thead className='calendar-header'>
                     <tr>
@@ -83,7 +118,7 @@ export default class Calendar extends Component {
                         <div className='calendar-item d-flex align-items-stretch' key={index}>
                             <div className={`card w-100 
                                 ${date['status'] === 'inactive' ? 'inactive-card' :
-                                date['status'] === 'current' ? 'current-card' : ''}`
+                                date['status'] === 'current' ? 'bg-primary text-white' : ''}`
                             }>
                                 <div className='card-body'>
                                     <h5 className='card-title'>{date['date'].getDate()}</h5>
@@ -92,7 +127,7 @@ export default class Calendar extends Component {
                                         event.type_id === this.state.eventTypes.EVERY_WEEK && event.day_of_week === date['date'].getDay() ||
                                         event.type_id === this.state.eventTypes.EVERY_MONTH && event.day_of_month === date['date'].getDate() ||
                                         event.type_id === this.state.eventTypes.EVERY_YEAR && event.day_of_month === date['date'].getDate() &&
-                                            event.month_of_year === date['date'].getMonth()
+                                            event.month_of_year - 1 === date['date'].getMonth()
                                     ).map((event, eventIndex) => {
                                         return (
                                             <div key={index + '' + eventIndex}

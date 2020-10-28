@@ -22,15 +22,16 @@
     color: gray;
 }
 
-.current-card {
-    border: 3px solid royalblue;
+.bg-primary .own-event {
+    color: #baffea;
 }
 
-.current-card .card-title, .own-event {
-    color: royalblue;
+.own-event {
+    color: #2bb38a;
+    font-weight: bold;
 }
 
 .event-name {
     font-size: 14px;
-    padding-top: 2px!important;
+    padding-top: 1px!important;
 }

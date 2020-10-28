@@ -16,7 +16,7 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
-        axios.get('api/profile/' + JSON.parse(localStorage["user"]).id).then(response => {
+        axios.get(`api/profile/${JSON.parse(localStorage["user"]).id}`).then(response => {
             if (response.status === 200) {
                 this.setState({
                     email: response.data.email,

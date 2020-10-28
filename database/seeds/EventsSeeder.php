@@ -96,5 +96,16 @@ class EventsSeeder extends Seeder
             'day_of_month'=> 29,
             'month_of_year'=> 10
         ]);
+        Event::create([
+            'name'=> 'День холостяка',
+            'description' => 'Вечеринка у Децла дома',
+            'date' => date('Y-m-d H:i:s'),
+            'creator_id'=> 4,
+            'type_id'=> EventType::where('key', 'every_year')->first()->id,
+            'hour_of_day'=> 16,
+            'day_of_week'=> null,
+            'day_of_month'=> 11,
+            'month_of_year'=> 11
+        ]);
     }
 }

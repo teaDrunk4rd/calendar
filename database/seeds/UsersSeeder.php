@@ -9,7 +9,7 @@ class UsersSeeder extends Seeder
     public function run()
     {
         User::create([
-            'full_name' => null,
+            'full_name' => '',
             'email' => 'user1@m.ru',
             'password' => Hash::make(123),
             'remember_token' => '',
@@ -17,7 +17,7 @@ class UsersSeeder extends Seeder
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
         User::create([
-            'full_name' => null,
+            'full_name' => '',
             'email' => 'user2@m.ru',
             'password' => Hash::make(123),
             'remember_token' => '',
@@ -25,7 +25,7 @@ class UsersSeeder extends Seeder
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
         User::create([
-            'full_name' => null,
+            'full_name' => '',
             'email' => 'user3@m.ru',
             'password' => Hash::make(123),
             'remember_token' => '',
@@ -33,7 +33,7 @@ class UsersSeeder extends Seeder
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
         User::create([
-            'full_name' => null,
+            'full_name' => '',
             'email' => 'user4@m.ru',
             'password' => Hash::make(123),
             'remember_token' => '',
