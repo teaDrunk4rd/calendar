@@ -73,8 +73,16 @@ export default class Profile extends Component {
 
     logout(event) {
         event.preventDefault();
-        localStorage.clear();
-        this.props.history.push('/login');
+        axios.get('api/logout').then(response => {
+            if (response.status === 200 && !response.data.message) {
+                localStorage.clear();
+                this.props.history.push('/login');
+            } else {
+                NotificationManager.error(response.data.message);
+            }
+        }).catch(error => {
+            NotificationManager.error('Произошла ошибка');
+        });
     }
 
     render() {

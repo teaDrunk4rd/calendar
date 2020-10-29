@@ -8,13 +8,17 @@ use Illuminate\Http\Request;
 
 Route::post('login', 'AuthController@login');
 Route::post('registration', 'AuthController@registration');
+Route::get('logout', 'AuthController@logout');
 
-Route::get('profile/{id}', 'UsersController@read');
-Route::put('profile/update','UsersController@update');
 
-Route::get('events/{date}', 'EventsController@index');
-Route::post('events/create', 'EventsController@create');
-Route::get('events/read/{id}', 'EventsController@read');
-Route::put('events/update', 'EventsController@update');
+Route::group(['middleware' =>'jwt.auth'], function () {
+    Route::get('profile/{id}', 'UsersController@read');
+    Route::put('profile/update','UsersController@update');
 
-Route::get('eventTypes', 'EventTypesController@index');
+    Route::get('events/{date}', 'EventsController@index');
+    Route::post('events/create', 'EventsController@create');
+    Route::get('events/read/{id}', 'EventsController@read');
+    Route::put('events/update', 'EventsController@update');
+
+    Route::get('eventTypes', 'EventTypesController@index');
+});

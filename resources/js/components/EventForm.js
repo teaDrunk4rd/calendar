@@ -30,6 +30,10 @@ export default class EventForm extends Component {
                     eventTypes: response.data
                 });
             }
+        }).catch(error => {
+            NotificationManager.error("Произошла ошибка");
+            if (error.response.status === 401)
+                this.props.history.push('/login');
         });
         if (this.state.id !== undefined) {
             axios.get(`/api/events/read/${this.state.id}`).then(response => {
@@ -43,6 +47,10 @@ export default class EventForm extends Component {
                         isLoaded: true
                     });
                 }
+            }).catch(error => {
+                NotificationManager.error("Произошла ошибка");
+                if (error.response.status === 401)
+                    this.props.history.push('/login');
             });
         } else {
             this.setState({
@@ -71,7 +79,7 @@ export default class EventForm extends Component {
                 description: this.state.description,
                 date: (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000,
                 type_id: this.state.typeId,
-                closed_at: this.state.closedDate != null ?
+                closed_at: this.state.closedDate !== null && this.state.closedDate !== '' ?
                     (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000 : null,
                 creator_id: JSON.parse(localStorage["user"]).id
             }).then(response => {
@@ -83,6 +91,10 @@ export default class EventForm extends Component {
                 } else {
                     NotificationManager.error(response.data.message);
                 }
+            }).catch(error => {
+                NotificationManager.error("Произошла ошибка");
+                if (error.response.status === 401)
+                    this.props.history.push('/login');
             });
         } else {
             axios.post('/api/events/create', {
@@ -90,7 +102,7 @@ export default class EventForm extends Component {
                 description: this.state.description,
                 date: (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000,
                 type_id: this.state.typeId,
-                closed_at: this.state.closedDate != null ?
+                closed_at: this.state.closedDate !== null && this.state.closedDate !== '' ?
                     (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000 : null,
                 creator_id: JSON.parse(localStorage["user"]).id
             }).then(response => {
@@ -102,6 +114,10 @@ export default class EventForm extends Component {
                 } else {
                     NotificationManager.error(response.data.message);
                 }
+            }).catch(error => {
+                NotificationManager.error("Произошла ошибка");
+                if (error.response.status === 401)
+                    this.props.history.push('/login');
             });
         }
     }

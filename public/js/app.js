@@ -103893,6 +103893,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_datepicker__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_datepicker__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var date_fns_locale_ru__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! date-fns/locale/ru */ "./node_modules/date-fns/esm/locale/ru/index.js");
 /* harmony import */ var _Preloader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Preloader */ "./resources/js/components/Preloader.js");
+/* harmony import */ var react_notifications__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-notifications */ "./node_modules/react-notifications/lib/index.js");
+/* harmony import */ var react_notifications__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_notifications__WEBPACK_IMPORTED_MODULE_5__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -103914,6 +103916,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 
 
 
@@ -103949,6 +103952,7 @@ var Calendar = /*#__PURE__*/function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      this.updateEvents(this.state.date);
       axios.get('api/eventTypes').then(function (response) {
         if (response.status === 200) {
           _this2.setState({
@@ -103969,7 +103973,6 @@ var Calendar = /*#__PURE__*/function (_Component) {
           });
         }
       });
-      this.updateEvents(this.state.date);
     }
   }, {
     key: "updateEvents",
@@ -103988,6 +103991,10 @@ var Calendar = /*#__PURE__*/function (_Component) {
             isLoaded: true
           });
         }
+      })["catch"](function (error) {
+        // сделать кастомный axios
+        react_notifications__WEBPACK_IMPORTED_MODULE_5__["NotificationManager"].error("Произошла ошибка");
+        if (error.response.status === 401) _this3.props.history.push('/login');
       });
     }
   }, {
@@ -104109,6 +104116,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Preloader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Preloader */ "./resources/js/components/Preloader.js");
+/* harmony import */ var react_notifications__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-notifications */ "./node_modules/react-notifications/lib/index.js");
+/* harmony import */ var react_notifications__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_notifications__WEBPACK_IMPORTED_MODULE_2__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -104130,6 +104139,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 
 
 
@@ -104172,6 +104182,9 @@ var Event = /*#__PURE__*/function (_Component) {
               isLoaded: true
             });
           }
+        })["catch"](function (error) {
+          react_notifications__WEBPACK_IMPORTED_MODULE_2__["NotificationManager"].error("Произошла ошибка");
+          if (error.response.status === 401) _this2.props.history.push('/login');
         });
       }
     }
@@ -104297,6 +104310,9 @@ var EventForm = /*#__PURE__*/function (_Component) {
             eventTypes: response.data
           });
         }
+      })["catch"](function (error) {
+        react_notifications__WEBPACK_IMPORTED_MODULE_4__["NotificationManager"].error("Произошла ошибка");
+        if (error.response.status === 401) _this2.props.history.push('/login');
       });
 
       if (this.state.id !== undefined) {
@@ -104311,6 +104327,9 @@ var EventForm = /*#__PURE__*/function (_Component) {
               isLoaded: true
             });
           }
+        })["catch"](function (error) {
+          react_notifications__WEBPACK_IMPORTED_MODULE_4__["NotificationManager"].error("Произошла ошибка");
+          if (error.response.status === 401) _this2.props.history.push('/login');
         });
       } else {
         this.setState({
@@ -104342,7 +104361,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
           description: this.state.description,
           date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
           type_id: this.state.typeId,
-          closed_at: this.state.closedDate != null ? (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000 : null,
+          closed_at: this.state.closedDate !== null && this.state.closedDate !== '' ? (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000 : null,
           creator_id: JSON.parse(localStorage["user"]).id
         }).then(function (response) {
           if (response.status === 200 && !response.data.message) {
@@ -104353,6 +104372,9 @@ var EventForm = /*#__PURE__*/function (_Component) {
           } else {
             react_notifications__WEBPACK_IMPORTED_MODULE_4__["NotificationManager"].error(response.data.message);
           }
+        })["catch"](function (error) {
+          react_notifications__WEBPACK_IMPORTED_MODULE_4__["NotificationManager"].error("Произошла ошибка");
+          if (error.response.status === 401) _this3.props.history.push('/login');
         });
       } else {
         axios.post('/api/events/create', {
@@ -104360,7 +104382,7 @@ var EventForm = /*#__PURE__*/function (_Component) {
           description: this.state.description,
           date: (this.state.date.getTime() - this.state.date.getTimezoneOffset() * 60000) / 1000,
           type_id: this.state.typeId,
-          closed_at: this.state.closedDate != null ? (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000 : null,
+          closed_at: this.state.closedDate !== null && this.state.closedDate !== '' ? (this.state.closedDate.getTime() - this.state.closedDate.getTimezoneOffset() * 60000) / 1000 : null,
           creator_id: JSON.parse(localStorage["user"]).id
         }).then(function (response) {
           if (response.status === 201 && !response.data.message) {
@@ -104371,6 +104393,9 @@ var EventForm = /*#__PURE__*/function (_Component) {
           } else {
             react_notifications__WEBPACK_IMPORTED_MODULE_4__["NotificationManager"].error(response.data.message);
           }
+        })["catch"](function (error) {
+          react_notifications__WEBPACK_IMPORTED_MODULE_4__["NotificationManager"].error("Произошла ошибка");
+          if (error.response.status === 401) _this3.props.history.push('/login');
         });
       }
     }
@@ -105024,14 +105049,25 @@ var Profile = /*#__PURE__*/function (_Component) {
   }, {
     key: "logout",
     value: function logout(event) {
+      var _this4 = this;
+
       event.preventDefault();
-      localStorage.clear();
-      this.props.history.push('/login');
+      axios.get('api/logout').then(function (response) {
+        if (response.status === 200 && !response.data.message) {
+          localStorage.clear();
+
+          _this4.props.history.push('/login');
+        } else {
+          react_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationManager"].error(response.data.message);
+        }
+      })["catch"](function (error) {
+        react_notifications__WEBPACK_IMPORTED_MODULE_1__["NotificationManager"].error('Произошла ошибка');
+      });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var _this$state = this.state,
           email = _this$state.email,
@@ -105068,7 +105104,7 @@ var Profile = /*#__PURE__*/function (_Component) {
         required: "required",
         value: email,
         onChange: function onChange(event) {
-          return _this4.setState({
+          return _this5.setState({
             email: event.target.value
           });
         },
@@ -105084,7 +105120,7 @@ var Profile = /*#__PURE__*/function (_Component) {
         autoComplete: "false",
         value: fullName,
         onChange: function onChange(event) {
-          return _this4.setState({
+          return _this5.setState({
             fullName: event.target.value
           });
         },
@@ -105100,7 +105136,7 @@ var Profile = /*#__PURE__*/function (_Component) {
         autoComplete: "new-password",
         value: oldPassword,
         onChange: function onChange(event) {
-          return _this4.setState({
+          return _this5.setState({
             oldPassword: event.target.value
           });
         },
@@ -105116,7 +105152,7 @@ var Profile = /*#__PURE__*/function (_Component) {
         autoComplete: "new-password",
         value: newPassword,
         onChange: function onChange(event) {
-          return _this4.setState({
+          return _this5.setState({
             newPassword: event.target.value
           });
         },
@@ -105132,7 +105168,7 @@ var Profile = /*#__PURE__*/function (_Component) {
         autoComplete: "new-password",
         value: passwordConfirmation,
         onChange: function onChange(event) {
-          return _this4.setState({
+          return _this5.setState({
             passwordConfirmation: event.target.value
           });
         },
@@ -105144,7 +105180,7 @@ var Profile = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         href: "#",
         onClick: function onClick(event) {
-          return _this4.setState({
+          return _this5.setState({
             changePassword: !changePassword
           });
         }

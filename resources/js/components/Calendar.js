@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ru from "date-fns/locale/ru";
 import Preloader from "./Preloader";
+import {NotificationManager} from "react-notifications";
 registerLocale("ru", ru);
 
 
@@ -21,6 +22,8 @@ export default class Calendar extends Component {
     }
 
     componentDidMount() {
+        this.updateEvents(this.state.date);
+
         axios.get('api/eventTypes').then(response => {
             if (response.status === 200) {
                 this.setState({
@@ -33,20 +36,22 @@ export default class Calendar extends Component {
                 });
             }
         });
-        this.updateEvents(this.state.date);
     }
 
     updateEvents(date) {
-        axios.get(`api/events/${(date.getTime() - (date.getTimezoneOffset() * 60000)) / 1000}`)
-            .then(response => {
-                if (response.status === 200) {
-                    response.data.forEach(function (event) {
-                        event.date = new Date(event.date);
-                        event.closed_at = event.closed_at != null ? new Date(event.closed_at) : null;
-                    });
-                    this.setState({events: response.data, isLoaded: true});
-                }
-            });
+        axios.get(`api/events/${(date.getTime() - (date.getTimezoneOffset() * 60000)) / 1000}`).then(response => {
+            if (response.status === 200) {
+                response.data.forEach(function (event) {
+                    event.date = new Date(event.date);
+                    event.closed_at = event.closed_at != null ? new Date(event.closed_at) : null;
+                });
+                this.setState({events: response.data, isLoaded: true});
+            }
+        }).catch(error => {  // сделать кастомный axios
+            NotificationManager.error("Произошла ошибка");
+            if (error.response.status === 401)
+                this.props.history.push('/login');
+        });
     }
 
     getDaysInMonth(month, year) {
