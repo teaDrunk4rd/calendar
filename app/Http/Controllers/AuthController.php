@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Facades\JWTFactory;
 
@@ -76,7 +77,7 @@ class AuthController extends Controller
             'jti'   => uniqid(),
 
             'name'=> $user->email,
-            'csrf-token' => str_random(32),
+            'csrf-token' => Str::random(32),
         ]);
         $payload = $factory->make();
         return JWTAuth::encode($payload);
