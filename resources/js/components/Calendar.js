@@ -24,7 +24,7 @@ export default class Calendar extends Component {
     componentDidMount() {
         this.updateEvents(this.state.date);
 
-        axios.get('api/eventTypes').then(response => {
+        axios.get('api/event_types').then(response => {
             if (response.status === 200) {
                 this.setState({
                     eventTypes: {

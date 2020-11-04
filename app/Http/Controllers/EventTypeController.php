@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\EventType;
 use Illuminate\Http\Request;
 
-class EventTypesController extends Controller
+class EventTypeController extends Controller
 {
-    public function index() {
+    public function __invoke() {
         return EventType::all();
     }
 }

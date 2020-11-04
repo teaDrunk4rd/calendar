@@ -24,7 +24,7 @@ export default class EventForm extends Component {
     }
 
     componentDidMount() {
-        axios.get('/api/eventTypes').then(response => {
+        axios.get('/api/event_types').then(response => {
             if (response.status === 200) {
                 this.setState({
                     eventTypes: response.data

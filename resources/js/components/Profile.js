@@ -22,7 +22,7 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
-        axios.get(`api/profile/${JSON.parse(localStorage["user"]).id}`).then(response => {
+        axios.get(`api/profiles/${JSON.parse(localStorage["user"]).id}`).then(response => {
             if (response.status === 200) {
                 this.setState({
                     email: response.data.email,
@@ -52,7 +52,7 @@ export default class Profile extends Component {
             return NotificationManager.error('Слишком длинный пароль');
         }
 
-        axios.put('api/profile/update', {
+        axios.put('api/profiles/update', {
             id: JSON.parse(localStorage["user"]).id,
             email: this.state.email,
             changePassword: this.state.changePassword,

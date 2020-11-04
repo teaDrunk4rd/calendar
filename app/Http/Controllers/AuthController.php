@@ -21,7 +21,7 @@ class AuthController extends Controller
             'password' => 'required|max:255',
         ]);
 
-        if (!User::where('email', $request['email'])->first() == null)
+        if (User::where('email', $request['email'])->first() != null)
             return response()->json(['message' => 'Пользователь с таким email уже существует']);
 
         if (!filter_var($request['email'], FILTER_VALIDATE_EMAIL))

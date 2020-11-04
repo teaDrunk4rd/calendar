@@ -7,7 +7,7 @@ use App\EventType;
 use DateTime;
 use Illuminate\Http\Request;
 
-class EventsController extends Controller
+class EventController extends Controller
 {
     public function index($date) {
         $month = DateTime::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $date))->format('m');
@@ -18,7 +18,7 @@ class EventsController extends Controller
             ->get();
     }
 
-    public function create(Request $request) {
+    public function store(Request $request) {
         $this->validate($request, [
             'name' => 'required|max:255',
             'date' => 'required',
@@ -32,7 +32,7 @@ class EventsController extends Controller
         return response()->json($event, 201);
     }
 
-    public function read($id) {
+    public function show($id) {
         return Event::with('eventType')->find($id);
     }
 

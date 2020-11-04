@@ -1,19 +1,20 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 
-Route::post('login', 'AuthController@login');
 Route::post('registration', 'AuthController@registration');
+Route::post('login', 'AuthController@login');
 Route::get('logout', 'AuthController@logout');
 
 
 Route::group(['middleware' => 'jwt.auth'], function () {
-    Route::get('profile/{id}', 'UsersController@read');
-    Route::put('profile/update', 'UsersController@update');
+    Route::get('profiles/{id}', 'UserController@show');
+    Route::put('profiles/update', 'UserController@update');
 
-    Route::get('events/{date}', 'EventsController@index');
-    Route::post('events/create', 'EventsController@create');
-    Route::get('events/read/{id}', 'EventsController@read');
-    Route::put('events/update', 'EventsController@update');
+    Route::get('events/{date}', 'EventController@index');
+    Route::post('events/create', 'EventController@store');
+    Route::get('events/read/{id}', 'EventController@show');
+    Route::put('events/update', 'EventController@update');
 
-    Route::get('eventTypes', 'EventTypesController@index');
+    Route::get('event_types', 'EventTypeController');
 });

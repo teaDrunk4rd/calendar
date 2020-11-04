@@ -1,3 +1,5 @@
 <?php
 
-Route::view('/{path?}', 'welcome');
+use Illuminate\Support\Facades\Route;
+
+Route::view('/{path?}', 'index');

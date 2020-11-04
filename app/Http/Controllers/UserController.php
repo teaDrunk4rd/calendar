@@ -6,9 +6,9 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class UsersController extends Controller
+class UserController extends Controller
 {
-    public function read($id) {
+    public function show($id) {
         return response()->json(User::find($id), 200);
     }
 
