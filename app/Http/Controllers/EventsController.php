@@ -19,7 +19,11 @@ class EventsController extends Controller
     }
 
     public function create(Request $request) {
-        $this->validate($request, Event::$validation);
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'date' => 'required',
+            'type_id' => 'required',
+        ]);
 
         $event = new Event();
         $event = $this->editEvent($event, $request);
@@ -33,7 +37,11 @@ class EventsController extends Controller
     }
 
     public function update(Request $request) {
-        $this->validate($request, Event::$validation);
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'date' => 'required',
+            'type_id' => 'required',
+        ]);
 
         $event = Event::find($request['id']);
 
@@ -54,7 +62,8 @@ class EventsController extends Controller
         $event->date = $date;
         $event->type_id = $request['type_id'];
         $event->creator_id = $request['creator_id'];
-        $event->closed_at = $request['closed_at'] != null && $request['closed_at'] != '' ? DateTime::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $request['closed_at'])) : null;
+        $event->closed_at = $request['closed_at'] != null && $request['closed_at'] != '' ?
+            DateTime::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $request['closed_at'])) : null;
         $event->hour_of_day = $date->format('H');
 
         switch ($event->type_id){

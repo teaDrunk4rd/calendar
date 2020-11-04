@@ -39,7 +39,7 @@ class AuthController extends Controller
         $user->save();
 
         return response()->json($user, 201)
-            ->withCookie('token', $this::getToken($user), config('jwt.ttl'), "/", null, false, true);;
+            ->withCookie('token', $this::getToken($user), config('jwt.ttl'), "/", null, false, true);
     }
 
     public function login(Request $request) {
