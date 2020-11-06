@@ -7,18 +7,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    public $timestamps = false;
     use Notifiable;
 
     protected $fillable = [
-        'email', 'password',
+        'full_name',
+        'email',
+        'password'
     ];
 
     protected $hidden = [
-        'password', 'remember_token',
-    ];
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
+        'password'
     ];
 
     public function events()

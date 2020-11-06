@@ -11,34 +11,22 @@ class UsersSeeder extends Seeder
         User::create([
             'full_name' => '',
             'email' => 'user1@m.ru',
-            'password' => Hash::make(123),
-            'remember_token' => '',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'password' => Hash::make(123)
         ]);
         User::create([
             'full_name' => '',
             'email' => 'user2@m.ru',
-            'password' => Hash::make(123),
-            'remember_token' => '',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'password' => Hash::make(123)
         ]);
         User::create([
             'full_name' => '',
             'email' => 'user3@m.ru',
-            'password' => Hash::make(123),
-            'remember_token' => '',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'password' => Hash::make(123)
         ]);
         User::create([
             'full_name' => '',
             'email' => 'user4@m.ru',
-            'password' => Hash::make(123),
-            'remember_token' => '',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'password' => Hash::make(123)
         ]);
     }
 }
