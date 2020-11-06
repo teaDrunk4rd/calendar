@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import Preloader from "./Preloader";
-import {NotificationManager} from "react-notifications";
 
 export default class Event extends Component {
     constructor(props) {
@@ -28,10 +27,6 @@ export default class Event extends Component {
                         isLoaded: true
                     });
                 }
-            }).catch(error => {
-                NotificationManager.error("Произошла ошибка");
-                if (error.response.status === 401)
-                    this.props.history.push('/login');
             });
         }
     }

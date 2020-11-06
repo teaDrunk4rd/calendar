@@ -3,7 +3,6 @@ import {Link} from "react-router-dom";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ru from "date-fns/locale/ru";
 import Preloader from "./Preloader";
-import {NotificationManager} from "react-notifications";
 registerLocale("ru", ru);
 
 
@@ -47,10 +46,6 @@ export default class Calendar extends Component {
                 });
                 this.setState({events: response.data, isLoaded: true});
             }
-        }).catch(error => {  // сделать кастомный axios
-            NotificationManager.error("Произошла ошибка");
-            if (error.response.status === 401)
-                this.props.history.push('/login');
         });
     }
 
@@ -62,7 +57,9 @@ export default class Calendar extends Component {
             .map(function (v, i) {
                 return {
                     'date': new Date(year, month, i + 1),
-                    'status': year === today.getFullYear() && month === today.getMonth() && i + 1 === today.getDate() ? 'current' : 'active'
+                    'status': year === today.getFullYear() && month === today.getMonth() && i + 1 === today.getDate()
+                        ? 'current'
+                        : 'active'
                 }
             }).filter(v => v['date'].getMonth() === month);
 

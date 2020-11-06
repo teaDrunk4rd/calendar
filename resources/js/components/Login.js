@@ -32,8 +32,6 @@ export default class Login extends Component {
             if (response.status === 200 && !response.data.message) {
                 localStorage['user'] = JSON.stringify(response.data);
                 this.props.history.push('/');
-            } else {
-                NotificationManager.error(response.data.message);
             }
         });
     }

@@ -1,4 +1,7 @@
 window._ = require('lodash');
+import {NotificationManager} from "react-notifications";
+import { createHashHistory } from 'history'
+const history = createHashHistory()
 
 
 try {
@@ -19,3 +22,19 @@ if (token) {
 } else {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
+
+window.axios.interceptors.response.use(response => { return response; }, error => {
+    if (error.response.data.errors) {
+        NotificationManager.error(error.response.data.errors[Object.keys(error.response.data.errors)[0]][0]);
+    } else if (error.response.status === 403) {
+        NotificationManager.error("Доступ запрещён");
+    } else if (error.response.status === 401 && !NotificationManager.listNotify.find(x => x.message === "Требуется авторизация")) {
+        localStorage.clear();
+        history.push('/login');
+        NotificationManager.error("Требуется авторизация");
+    } else if (!NotificationManager.listNotify.find(x => x.message === "Произошла ошибка")) {
+        NotificationManager.error("Произошла ошибка");
+    }
+
+    return Promise.reject(error);
+})

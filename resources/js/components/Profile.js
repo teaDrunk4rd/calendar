@@ -63,11 +63,7 @@ export default class Profile extends Component {
             if (response.status === 200 && !response.data.message) {
                 localStorage['user'] = JSON.stringify(response.data);
                 this.props.history.push('/');
-            } else {
-                NotificationManager.error(response.data.message);
             }
-        }).catch(error => {
-            NotificationManager.error('Произошла ошибка');
         });
     }
 
@@ -77,11 +73,7 @@ export default class Profile extends Component {
             if (response.status === 200 && !response.data.message) {
                 localStorage.clear();
                 this.props.history.push('/login');
-            } else {
-                NotificationManager.error(response.data.message);
             }
-        }).catch(error => {
-            NotificationManager.error('Произошла ошибка');
         });
     }
 

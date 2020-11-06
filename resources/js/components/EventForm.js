@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import Select from "react-select";
 import DatePicker, { registerLocale } from "react-datepicker";
 import ru from "date-fns/locale/ru";
-import {NotificationManager} from "react-notifications";
 import Preloader from "./Preloader";
 registerLocale("ru", ru);
 
@@ -30,10 +29,6 @@ export default class EventForm extends Component {
                     eventTypes: response.data
                 });
             }
-        }).catch(error => {
-            NotificationManager.error("Произошла ошибка");
-            if (error.response.status === 401)
-                this.props.history.push('/login');
         });
         if (this.state.id !== undefined) {
             axios.get(`/api/events/read/${this.state.id}`).then(response => {
@@ -47,10 +42,6 @@ export default class EventForm extends Component {
                         isLoaded: true
                     });
                 }
-            }).catch(error => {
-                NotificationManager.error("Произошла ошибка");
-                if (error.response.status === 401)
-                    this.props.history.push('/login');
             });
         } else {
             this.setState({
@@ -79,20 +70,7 @@ export default class EventForm extends Component {
                         pathname: '/',
                         date: this.state.date
                     });
-                } else {
-                    NotificationManager.error(response.data.message);
                 }
-            }).catch(error => {
-                if (error.response.data.errors){
-                    NotificationManager.error(error.response.data.errors[Object.keys(error.response.data.errors)[0]][0]);
-                } else if (error.response.status === 403) {
-                    NotificationManager.error("Доступ запрещён");
-                } else {
-                    NotificationManager.error("Произошла ошибка");
-                }
-
-                if (error.response.status === 401)
-                    this.props.history.push('/login');
             });
         } else {
             axios.post('/api/events/create', {
@@ -111,17 +89,6 @@ export default class EventForm extends Component {
                         date: this.state.date
                     });
                 }
-            }).catch(error => {
-                if (error.response.data.errors){
-                    NotificationManager.error(error.response.data.errors[Object.keys(error.response.data.errors)[0]][0]);
-                } else if (error.response.status === 403) {
-                    NotificationManager.error("Доступ запрещён");
-                } else {
-                    NotificationManager.error("Произошла ошибка");
-                }
-
-                if (error.response.status === 401)
-                    this.props.history.push('/login');
             });
         }
     }
