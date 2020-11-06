@@ -10,7 +10,7 @@ export default class Profile extends Component {
         this.state = {
             email: '',
             fullName: '',
-            changePassword: false,
+            changePasswordFlag: false,
             oldPassword: '',
             newPassword: '',
             passwordConfirmation: '',
@@ -36,33 +36,27 @@ export default class Profile extends Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        if (this.state.email === '') {
-            return NotificationManager.error('Заполните e-mail');
-        } else if (this.state.fullName.length > 255) {
-            return NotificationManager.error('Слишком длинное имя');
-        } else if (this.state.email.length > 255) {
-            return NotificationManager.error('Слишком длинный email');
-        } else if (this.state.changePassword) {
-            if (this.state.newPassword === '' || this.state.passwordConfirmation === '' || this.state.oldPassword === '') {
-                return NotificationManager.error('Заполните пароли');
-            } else if (this.state.passwordConfirmation !== this.state.newPassword) {
-                return NotificationManager.error('Новый пароль и подтверждение должны совпадать');
-            }
-        } else if (this.state.newPassword.length > 255) {
-            return NotificationManager.error('Слишком длинный пароль');
-        }
-
         axios.put('api/profiles/update', {
             id: JSON.parse(localStorage["user"]).id,
+            full_name: this.state.fullName,
             email: this.state.email,
-            changePassword: this.state.changePassword,
+            changePasswordFlag: this.state.changePasswordFlag,
             oldPassword: this.state.oldPassword,
             password: this.state.newPassword,
-            full_name: this.state.fullName
+            password_confirmation: this.state.passwordConfirmation
         }).then(response => {
             if (response.status === 200 && !response.data.message) {
                 localStorage['user'] = JSON.stringify(response.data);
-                this.props.history.push('/');
+                NotificationManager.success('Профиль успешно изменен');
+                if (this.state.passwordConfirmation) {
+                    this.setState({
+                        changePasswordFlag: false,
+                        oldPassword: '',
+                        newPassword: '',
+                        passwordConfirmation: ''
+                    })
+                }
+
             }
         });
     }
@@ -78,7 +72,7 @@ export default class Profile extends Component {
     }
 
     render() {
-        const {email, fullName, changePassword, oldPassword, newPassword, passwordConfirmation} = this.state;
+        const {email, fullName, changePasswordFlag, oldPassword, newPassword, passwordConfirmation} = this.state;
         return (
             <div className="col-6 m-auto">
                 <div className="card">
@@ -97,7 +91,6 @@ export default class Profile extends Component {
                                 <div className="col-md-6">
                                     <input type="email"
                                            autoComplete="false"
-                                           required="required"
                                            value={email}
                                            onChange={event => this.setState({email: event.target.value})}
                                            className="form-control "/>
@@ -118,7 +111,7 @@ export default class Profile extends Component {
                             </div>
 
                             {
-                                changePassword ? (
+                                changePasswordFlag ? (
                                     <div>
                                         <div className="form-group row">
                                             <label className="col-md-4 col-form-label text-md-right">Старый пароль</label>
@@ -157,7 +150,7 @@ export default class Profile extends Component {
 
                                     <div className="form-group row">
                                         <div className="col-md-6 offset-md-4">
-                                            <a href='#' onClick={event => this.setState({changePassword: !changePassword})}>
+                                            <a href='#' onClick={event => this.setState({changePasswordFlag: !changePasswordFlag})}>
                                                 Сменить пароль
                                             </a>
                                         </div>

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserUpdateRequest;
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -12,38 +12,18 @@ class UserController extends Controller
         return response()->json(User::find($id), 200);
     }
 
-    public function update(Request $request) {
-        $this->validate($request, [
-            'full_name' => 'max:255',
-            'email' => 'required|max:255',
-            'password' => 'max:255',
-        ]);
+    public function update(UserUpdateRequest $request) {
+        $validatedRequest = $request->validated();
 
-        $user = User::find($request["id"]);
-        if ($user) {
-            $user->full_name = $request['full_name'] == null ? '' : $request['full_name'];
+        $user = User::find($validatedRequest['id']);
 
-            if (!filter_var($request['email'], FILTER_VALIDATE_EMAIL))
-                return response()->json(['message' => 'E-mail введен неверно']);
+        $validatedRequest['full_name'] = $validatedRequest['full_name'] != null ? $validatedRequest['full_name'] : '';
+        $validatedRequest['password'] = $validatedRequest['password'] != null && $validatedRequest['password'] != ''
+            ? Hash::make($validatedRequest['password'])
+            : $user->password;
 
-            if ($user->email != $request['email']) {
-                if (User::where('email', $request['email'])->first() == null)
-                    $user->email = $request['email'];
-                else
-                    return response()->json(['message' => 'Пользователь с таким email уже существует']);
-            }
+        $user->update($validatedRequest);
 
-            if ($request['changePassword'] == 'true') {
-                if (Hash::check($request['oldPassword'], $user->password))
-                    $user->password = Hash::make($request['password']);
-                else
-                    return response()->json(['message' => 'Неверный старый пароль']);
-            }
-
-            $user->save();
-            return response()->json($user, 200);
-        }
-
-        return response()->json(['message' => 'Не найден пользователь']);
+        return response()->json(User::find($validatedRequest['id']), 200);
     }
 }

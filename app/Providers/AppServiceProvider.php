@@ -18,5 +18,11 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('check_password', function ($attribute, $value, $parameters, $validator) {
             return Hash::check($value, $parameters[0]);
         });
+        Validator::extend('check_password_if', function ($attribute, $value, $parameters, $validator) {
+            var_dump($parameters[0]);
+            return $parameters[0] == 'true' || Hash::check($value, $parameters[1]);
+//            $data = $validator->getData();
+//            return $data['changePasswordFlag'] == 'true' || Hash::check($value, $parameters[3]);
+        });
     }
 }
