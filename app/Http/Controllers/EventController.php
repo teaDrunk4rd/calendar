@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Event;
 use App\EventType;
+use App\Http\Requests\EventFormRequest;
 use DateTime;
-use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
@@ -18,16 +18,10 @@ class EventController extends Controller
             ->get();
     }
 
-    public function store(Request $request) {
-        $this->validate($request, [
-            'name' => 'required|max:255',
-            'date' => 'required',
-            'type_id' => 'required',
-        ]);
+    public function store(EventFormRequest $request) {
+        $validatedRequest = $this->editRequest($request->validated());
 
-        $event = new Event();
-        $event = $this->editEvent($event, $request);
-        $event->save();
+        $event = Event::create($validatedRequest);
 
         return response()->json($event, 201);
     }
@@ -36,55 +30,42 @@ class EventController extends Controller
         return Event::with('eventType')->find($id);
     }
 
-    public function update(Request $request) {
-        $this->validate($request, [
-            'name' => 'required|max:255',
-            'date' => 'required',
-            'type_id' => 'required',
-        ]);
+    public function update(EventFormRequest $request) {
+        $validatedRequest = $this->editRequest($request->validated());
 
-        $event = Event::find($request['id']);
-
-        if ($request['creator_id'] != $event->creator_id)
-            return response()->json(['message' => 'Вы не можете изменять чужое событие']);
-
-        $event = $this->editEvent($event, $request);
-        $event->save();
+        $event = Event::find($validatedRequest['id'])->update($validatedRequest);
 
         return response()->json($event, 200);
     }
 
-    private function editEvent(Event $event, Request $request) { // Учесть даты типа 31 для месяцев с 28-29-30 днями?
+    private function editRequest(array $request) { // Учесть даты типа 31 для месяцев с 28-29-30 днями?
         $date = DateTime::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $request['date']));
 
-        $event->name = $request['name'];
-        $event->description = $request['description'] != null ? $request['description'] : '';
-        $event->date = $date;
-        $event->type_id = $request['type_id'];
-        $event->creator_id = $request['creator_id'];
-        $event->closed_at = $request['closed_at'] != null && $request['closed_at'] != '' ?
+        $request['description'] = $request['description'] != null ? $request['description'] : '';
+        $request['date'] = $date;
+        $request['closed_at'] = $request['closed_at'] != null && $request['closed_at'] != '' ?
             DateTime::createFromFormat("Y-m-d H:i:s", date('Y-m-d H:i:s', $request['closed_at'])) : null;
-        $event->hour_of_day = $date->format('H');
+        $request['hour_of_day'] = $date->format('H');
 
-        switch ($event->type_id){
+        switch ($request['type_id']){
             case EventType::where('key', 'every_day')->first()->id:
-                $event->day_of_week = $event->day_of_month = $event->month_of_year = null;
+                $request['day_of_week'] = $request['day_of_month'] = $request['month_of_year'] = null;
                 break;
             case EventType::where('key', 'every_week')->first()->id:
-                $event->day_of_week = $date->format('N');
-                $event->day_of_month = $event->month_of_year = null;
+                $request['day_of_week'] = $date->format('N') != 7 ? $date->format('N') : 0;
+                $request['day_of_month'] = $request['month_of_year'] = null;
                 break;
             case EventType::where('key', 'every_month')->first()->id:
-                $event->day_of_month = $date->format('d');
-                $event->day_of_week = $event->month_of_year = null;
+                $request['day_of_month'] = $date->format('d');
+                $request['day_of_week'] = $request['month_of_year'] = null;
                 break;
             case EventType::where('key', 'every_year')->first()->id:
-                $event->day_of_month = $date->format('d');
-                $event->month_of_year = $date->format('m');
-                $event->day_of_week = null;
+                $request['day_of_month'] = $date->format('d');
+                $request['month_of_year'] = $date->format('m');
+                $request['day_of_week'] = null;
                 break;
         }
 
-        return $event;
+        return $request;
     }
 }

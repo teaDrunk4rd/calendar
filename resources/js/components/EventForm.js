@@ -62,22 +62,13 @@ export default class EventForm extends Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        if (this.state.name === '') {
-            return NotificationManager.error('Заполните наименование');
-        } else if (this.state.date === '' || this.state.date === null) {
-            return NotificationManager.error('Заполните дату');
-        } else if (this.state.typeId === '') {
-            return NotificationManager.error('Заполните тип');
-        } else if (this.state.name.length > 255) {
-            return NotificationManager.error('Слишком длинное наименование');
-        }
-
         if (this.state.id !== undefined) {
             axios.put('/api/events/update', {
                 id: this.state.id,
                 name: this.state.name,
                 description: this.state.description,
-                date: (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000,
+                date: this.state.date !== null && this.state.date !== '' ?
+                    (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000 : null,
                 type_id: this.state.typeId,
                 closed_at: this.state.closedDate !== null && this.state.closedDate !== '' ?
                     (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000 : null,
@@ -92,7 +83,14 @@ export default class EventForm extends Component {
                     NotificationManager.error(response.data.message);
                 }
             }).catch(error => {
-                NotificationManager.error("Произошла ошибка");
+                if (error.response.data.errors){
+                    NotificationManager.error(error.response.data.errors[Object.keys(error.response.data.errors)[0]][0]);
+                } else if (error.response.status === 403) {
+                    NotificationManager.error("Доступ запрещён");
+                } else {
+                    NotificationManager.error("Произошла ошибка");
+                }
+
                 if (error.response.status === 401)
                     this.props.history.push('/login');
             });
@@ -100,7 +98,8 @@ export default class EventForm extends Component {
             axios.post('/api/events/create', {
                 name: this.state.name,
                 description: this.state.description,
-                date: (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000,
+                date: this.state.date !== null && this.state.date !== '' ?
+                    (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000 : null,
                 type_id: this.state.typeId,
                 closed_at: this.state.closedDate !== null && this.state.closedDate !== '' ?
                     (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000 : null,
@@ -111,11 +110,16 @@ export default class EventForm extends Component {
                         pathname: '/',
                         date: this.state.date
                     });
-                } else {
-                    NotificationManager.error(response.data.message);
                 }
             }).catch(error => {
-                NotificationManager.error("Произошла ошибка");
+                if (error.response.data.errors){
+                    NotificationManager.error(error.response.data.errors[Object.keys(error.response.data.errors)[0]][0]);
+                } else if (error.response.status === 403) {
+                    NotificationManager.error("Доступ запрещён");
+                } else {
+                    NotificationManager.error("Произошла ошибка");
+                }
+
                 if (error.response.status === 401)
                     this.props.history.push('/login');
             });
@@ -136,7 +140,6 @@ export default class EventForm extends Component {
                                 <div className="col-md-6">
                                     <input type="text"
                                            autoComplete="false"
-                                           required="required"
                                            value={name}
                                            onChange={event => this.setState({name: event.target.value})}
                                            className="form-control "/>
