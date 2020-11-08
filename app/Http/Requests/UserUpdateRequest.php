@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UserUpdateRequest extends FormRequest
@@ -12,14 +11,13 @@ class UserUpdateRequest extends FormRequest
         return [
             'id' => 'exists:users,id',
             'full_name' => 'max:255',
-            'email' => 'required|max:255|email|unique:users,email,'.$this->id,
+            'email' => 'required|max:255|email|unique:users,email,' . $this->id,
             'changePasswordFlag' => '',
             'password' => 'required_if:changePasswordFlag,==,true|max:255|confirmed',
             'password_confirmation' => 'required_if:changePasswordFlag,==,true',
             'oldPassword' => [
                 'required_if:changePasswordFlag,==,true',
-                'check_password_if:'.$this->changePasswordFlag.','.User::find($this->id)->password,
-                //'check_password_if:changePasswordFlag,==,true,'.User::find($this->id)->password,
+                "check_password_from_if:changePasswordFlag,true,id,$this->id",
             ]
         ];
     }
@@ -38,7 +36,7 @@ class UserUpdateRequest extends FormRequest
             'password_confirmation.required_if' => 'Заполните подтверждение пароля',
             'password.max' => 'Слишком длинный пароль',
             'oldPassword.required_if' => 'Заполните старый пароль',
-            'oldPassword.check_password_if' => 'Неверный старый пароль'
+            'oldPassword.check_password_from_if' => 'Неверный старый пароль'
         ];
     }
 }

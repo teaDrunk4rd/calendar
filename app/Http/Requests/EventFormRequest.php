@@ -30,10 +30,11 @@ class EventFormRequest extends FormRequest
         ];
     }
 
-    public function authorize() {
+    public function authorize(Event $event)
+    {
         if ($this->id == null) return true;
 
-        $event = Event::find($this->id);
+        $event = $event::find($this->id);
 
         return $event && $this->creator_id == $event->creator_id;
     }
