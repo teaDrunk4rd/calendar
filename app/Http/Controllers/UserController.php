@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserUpdateRequest;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -14,17 +15,15 @@ class UserController extends Controller
         $this->user = $user;
     }
 
-    public function show(User $user)
+    public function show()
     {
-        $this->authorize('update', $user);
-        return response()->json($user, 200);
+        return response()->json(Auth::user(), 200);
     }
 
     public function update(UserUpdateRequest $request)
     {
         $request = $request->validated();
-        $user = $this->user::find($request['id']);
-        $this->authorize('update', $user);
+        $user = $this->user::find(Auth::user()->id);
 
         $request['full_name'] = $request['full_name'] != null ? $request['full_name'] : '';
         $request['password'] = $request['password'] != null && $request['password'] != ''
@@ -33,6 +32,6 @@ class UserController extends Controller
 
         $user->update($request);
 
-        return response()->json($this->user::find($request['id']), 200);
+        return response()->json($user, 200);
     }
 }

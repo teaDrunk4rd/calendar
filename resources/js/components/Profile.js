@@ -22,7 +22,7 @@ export default class Profile extends Component {
     }
 
     componentDidMount() {
-        axios.get(`api/profiles/${JSON.parse(localStorage["user"]).id}`).then(response => {
+        axios.get('api/profiles').then(response => {
             if (response.status === 200) {
                 this.setState({
                     email: response.data.email,
@@ -37,7 +37,6 @@ export default class Profile extends Component {
         event.preventDefault();
 
         axios.put('api/profiles/update', {
-            id: JSON.parse(localStorage["user"]).id,
             full_name: this.state.fullName,
             email: this.state.email,
             changePasswordFlag: this.state.changePasswordFlag,

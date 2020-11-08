@@ -6,6 +6,7 @@ use App\Event;
 use App\EventType;
 use App\Http\Requests\EventFormRequest;
 use DateTime;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -30,6 +31,7 @@ class EventController extends Controller
     public function store(EventFormRequest $request)
     {
         $validatedRequest = $this->editRequest($request->validated());
+        $validatedRequest['creator_id'] = Auth::user()->id;
         $event = $this->event::create($validatedRequest);
         return response()->json($event, 201);
     }

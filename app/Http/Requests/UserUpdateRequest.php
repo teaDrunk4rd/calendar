@@ -3,21 +3,21 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UserUpdateRequest extends FormRequest
 {
     public function rules()
     {
         return [
-            'id' => 'exists:users,id',
             'full_name' => 'max:255',
-            'email' => 'required|max:255|email|unique:users,email,' . $this->id,
+            'email' => 'required|max:255|email|unique:users,email,' . Auth::user()->id,
             'changePasswordFlag' => '',
             'password' => 'required_if:changePasswordFlag,==,true|max:255|confirmed',
             'password_confirmation' => 'required_if:changePasswordFlag,==,true',
             'oldPassword' => [
                 'required_if:changePasswordFlag,==,true',
-                "check_password_from_if:changePasswordFlag,true,id,$this->id",
+                "check_password_from_if:changePasswordFlag,true,id," . Auth::user()->id,
             ]
         ];
     }
@@ -25,7 +25,6 @@ class UserUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'id.exists' => 'Не найден пользователь',
             'full_name.max' => 'Слишком длинное имя',
             'email.required' => 'Заполните email',
             'email.max' => 'Слишком длинный email',

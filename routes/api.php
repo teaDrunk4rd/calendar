@@ -8,7 +8,7 @@ Route::get('logout', 'AuthController@logout');
 
 
 Route::group(['middleware' => 'jwt.auth'], function () {
-    Route::get('profiles/{user}', 'UserController@show');
+    Route::get('profiles', 'UserController@show');
     Route::put('profiles/update', 'UserController@update');
 
     Route::get('events/{date}', 'EventController@index');

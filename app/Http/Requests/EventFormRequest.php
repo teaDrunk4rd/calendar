@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Event;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EventFormRequest extends FormRequest
@@ -15,7 +14,6 @@ class EventFormRequest extends FormRequest
             'type_id' => 'required',
             'id' => '',
             'description' => '',
-            'creator_id' => '',
             'closed_at' => ''
         ];
     }

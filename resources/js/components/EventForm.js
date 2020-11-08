@@ -62,8 +62,7 @@ export default class EventForm extends Component {
                     (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000 : null,
                 type_id: this.state.typeId,
                 closed_at: this.state.closedDate !== null && this.state.closedDate !== '' ?
-                    (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000 : null,
-                creator_id: JSON.parse(localStorage["user"]).id
+                    (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000 : null
             }).then(response => {
                 if (response.status === 200 && !response.data.message) {
                     this.props.history.push({
@@ -80,8 +79,7 @@ export default class EventForm extends Component {
                     (this.state.date.getTime() - (this.state.date.getTimezoneOffset() * 60000)) / 1000 : null,
                 type_id: this.state.typeId,
                 closed_at: this.state.closedDate !== null && this.state.closedDate !== '' ?
-                    (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000 : null,
-                creator_id: JSON.parse(localStorage["user"]).id
+                    (this.state.closedDate.getTime() - (this.state.closedDate.getTimezoneOffset() * 60000)) / 1000 : null
             }).then(response => {
                 if (response.status === 201 && !response.data.message) {
                     this.props.history.push({
