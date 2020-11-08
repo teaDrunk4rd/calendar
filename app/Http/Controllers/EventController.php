@@ -42,7 +42,9 @@ class EventController extends Controller
     public function update(EventFormRequest $request)
     {
         $validatedRequest = $this->editRequest($request->validated());
-        $event = $this->event::find($validatedRequest['id'])->update($validatedRequest);
+        $event = $this->event::find($validatedRequest['id']);
+        $this->authorize('update', $event);
+        $event->update($validatedRequest);
         return response()->json($event, 200);
     }
 

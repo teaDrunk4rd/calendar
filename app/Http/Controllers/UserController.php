@@ -16,6 +16,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        $this->authorize('update', $user);
         return response()->json($user, 200);
     }
 
@@ -23,6 +24,7 @@ class UserController extends Controller
     {
         $request = $request->validated();
         $user = $this->user::find($request['id']);
+        $this->authorize('update', $user);
 
         $request['full_name'] = $request['full_name'] != null ? $request['full_name'] : '';
         $request['password'] = $request['password'] != null && $request['password'] != ''

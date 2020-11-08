@@ -1,6 +1,7 @@
 window._ = require('lodash');
 import {NotificationManager} from "react-notifications";
-import { createHashHistory } from 'history'
+import {createHashHistory} from 'history'
+
 const history = createHashHistory()
 
 
@@ -9,7 +10,8 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
-} catch (e) {}
+} catch (e) {
+}
 
 
 window.axios = require('axios');
@@ -23,17 +25,26 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-window.axios.interceptors.response.use(response => { return response; }, error => {
-    if (error.response.data.errors) {
+let errorMessages = {
+    auth: "Требуется авторизация",
+    forbidden: "Доступ запрещён",
+    default: "Произошла ошибка"
+}
+
+window.axios.interceptors.response.use(response => {
+    return response;
+}, error => {
+    if (error.response.data.errors) {  // validation rule error
         NotificationManager.error(error.response.data.errors[Object.keys(error.response.data.errors)[0]][0]);
     } else if (error.response.status === 403) {
-        NotificationManager.error("Доступ запрещён");
-    } else if (error.response.status === 401 && !NotificationManager.listNotify.find(x => x.message === "Требуется авторизация")) {
+        NotificationManager.error(error.response.data.message || errorMessages.forbidden);
+    } else if (error.response.status === 401 &&
+        !NotificationManager.listNotify.find(x => x.message === errorMessages.auth)) {
         localStorage.clear();
         history.push('/login');
-        NotificationManager.error("Требуется авторизация");
-    } else if (!NotificationManager.listNotify.find(x => x.message === "Произошла ошибка")) {
-        NotificationManager.error("Произошла ошибка");
+        NotificationManager.error(error.response.data.message || errorMessages.auth);
+    } else if (!NotificationManager.listNotify.find(x => x.message === errorMessages.default)) {
+        NotificationManager.error(error.response.data.message || errorMessages.default);
     }
 
     return Promise.reject(error);
